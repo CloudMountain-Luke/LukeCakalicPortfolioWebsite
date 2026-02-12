@@ -1,8 +1,9 @@
-import { useRef, useState, useMemo, useEffect, Suspense } from 'react'
+import { useRef, useState, useMemo, useEffect, Suspense, type MutableRefObject } from 'react'
 import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { portfolioItems, type PortfolioItem } from '../../data/portfolio'
+import { MobileControls } from '../ui/MobileControls'
 
 // ---- Constants ----
 const HALLWAY_WIDTH = 8
@@ -17,6 +18,7 @@ const CEILING_COLOR = '#1a1a2e'
 const FRAME_BORDER_COLOR = '#3a3a5a'
 const MOVE_SPEED = 5
 const MOUSE_SENSITIVITY = 0.002
+const TOUCH_SENSITIVITY = 0.004
 
 // Shared mutable state for per-frame crosshair targeting (avoids React re-renders)
 const fpsState = {
@@ -347,12 +349,18 @@ function CameraController({
   onSelectItem,
   onLockChange,
   onAimedItemChange,
+  isTouchDevice,
+  moveStateRef,
+  touchExitSignal,
 }: {
   totalLength: number
   artworkGroup: React.RefObject<THREE.Group | null>
   onSelectItem: (item: PortfolioItem) => void
   onLockChange: (locked: boolean) => void
   onAimedItemChange: (item: PortfolioItem | null) => void
+  isTouchDevice: boolean
+  moveStateRef: MutableRefObject<{ forward: boolean; backward: boolean; left: boolean; right: boolean }>
+  touchExitSignal: MutableRefObject<boolean>
 }) {
   const { camera, gl, scene } = useThree()
 
@@ -362,10 +370,17 @@ function CameraController({
 
   // Camera state (all refs to avoid re-renders)
   const isLocked = useRef(false)
+  const isTouchActive = useRef(false)
   const yaw = useRef(0)
   const pitch = useRef(0)
-  const moveState = useRef({ forward: false, backward: false, left: false, right: false })
   const scrollVelocity = useRef(0)
+
+  // Touch tracking refs
+  const lookTouchId = useRef<number | null>(null)
+  const lastLookTouch = useRef<{ x: number; y: number } | null>(null)
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null)
+  const touchStartTime = useRef(0)
+  const touchMoved = useRef(false)
 
   // Raycasting
   const raycaster = useRef(new THREE.Raycaster())
@@ -382,12 +397,10 @@ function CameraController({
     const onPointerLockChange = () => {
       const locked = document.pointerLockElement === canvas
       if (locked && !isLocked.current) {
-        // Entering FPS: reset look direction to forward
         yaw.current = 0
         pitch.current = 0
       } else if (!locked && isLocked.current) {
-        // Exiting FPS: clear movement state
-        moveState.current = { forward: false, backward: false, left: false, right: false }
+        moveStateRef.current = { forward: false, backward: false, left: false, right: false }
         scrollVelocity.current = 0
       }
       isLocked.current = locked
@@ -402,6 +415,7 @@ function CameraController({
     }
 
     const onClick = () => {
+      if (isTouchDevice) return
       if (!isLocked.current) {
         canvas.requestPointerLock()
       } else if (aimedItem.current) {
@@ -413,29 +427,113 @@ function CameraController({
     const onKeyDown = (e: KeyboardEvent) => {
       if (!isLocked.current) return
       switch (e.code) {
-        case 'KeyW': case 'ArrowUp': moveState.current.forward = true; e.preventDefault(); break
-        case 'KeyS': case 'ArrowDown': moveState.current.backward = true; e.preventDefault(); break
-        case 'KeyA': case 'ArrowLeft': moveState.current.left = true; e.preventDefault(); break
-        case 'KeyD': case 'ArrowRight': moveState.current.right = true; e.preventDefault(); break
+        case 'KeyW': case 'ArrowUp': moveStateRef.current.forward = true; e.preventDefault(); break
+        case 'KeyS': case 'ArrowDown': moveStateRef.current.backward = true; e.preventDefault(); break
+        case 'KeyA': case 'ArrowLeft': moveStateRef.current.left = true; e.preventDefault(); break
+        case 'KeyD': case 'ArrowRight': moveStateRef.current.right = true; e.preventDefault(); break
       }
     }
 
     const onKeyUp = (e: KeyboardEvent) => {
       switch (e.code) {
-        case 'KeyW': case 'ArrowUp': moveState.current.forward = false; break
-        case 'KeyS': case 'ArrowDown': moveState.current.backward = false; break
-        case 'KeyA': case 'ArrowLeft': moveState.current.left = false; break
-        case 'KeyD': case 'ArrowRight': moveState.current.right = false; break
+        case 'KeyW': case 'ArrowUp': moveStateRef.current.forward = false; break
+        case 'KeyS': case 'ArrowDown': moveStateRef.current.backward = false; break
+        case 'KeyA': case 'ArrowLeft': moveStateRef.current.left = false; break
+        case 'KeyD': case 'ArrowRight': moveStateRef.current.right = false; break
       }
     }
 
     const onWheel = (e: WheelEvent) => {
-      // Only capture scroll when in FPS mode - otherwise let page scroll normally
       if (isLocked.current) {
         e.preventDefault()
         scrollVelocity.current += e.deltaY * 0.005
       }
-      // When not locked, don't prevent default - let the page scroll
+    }
+
+    // Touch event handlers (mobile only)
+    const onTouchStart = (e: TouchEvent) => {
+      if (!isTouchDevice) return
+      const touch = e.changedTouches[0]
+      const rect = canvas.getBoundingClientRect()
+      const relX = (touch.clientX - rect.left) / rect.width
+      const relY = (touch.clientY - rect.top) / rect.height
+      const inJoystickZone = relX < 0.35 && relY > 0.55
+
+      if (!isTouchActive.current) {
+        // Enter FPS mode on first touch (if not tapping joystick area)
+        if (!inJoystickZone) {
+          e.preventDefault()
+          isTouchActive.current = true
+          yaw.current = 0
+          pitch.current = 0
+          cbRef.current.onLockChange(true)
+        }
+      }
+
+      // Track look touch (only if not in joystick zone)
+      if (isTouchActive.current && lookTouchId.current === null && !inJoystickZone) {
+        e.preventDefault()
+        lookTouchId.current = touch.identifier
+        lastLookTouch.current = { x: touch.clientX, y: touch.clientY }
+        touchStartPos.current = { x: touch.clientX, y: touch.clientY }
+        touchStartTime.current = Date.now()
+        touchMoved.current = false
+      }
+    }
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isTouchDevice || !isTouchActive.current) return
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const touch = e.changedTouches[i]
+        if (touch.identifier === lookTouchId.current && lastLookTouch.current) {
+          e.preventDefault()
+          const dx = touch.clientX - lastLookTouch.current.x
+          const dy = touch.clientY - lastLookTouch.current.y
+
+          yaw.current -= dx * TOUCH_SENSITIVITY
+          pitch.current -= dy * TOUCH_SENSITIVITY
+          pitch.current = THREE.MathUtils.clamp(pitch.current, -Math.PI / 3, Math.PI / 3)
+
+          lastLookTouch.current = { x: touch.clientX, y: touch.clientY }
+
+          if (touchStartPos.current &&
+            (Math.abs(touch.clientX - touchStartPos.current.x) > 10 ||
+             Math.abs(touch.clientY - touchStartPos.current.y) > 10)) {
+            touchMoved.current = true
+          }
+        }
+      }
+    }
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!isTouchDevice || !isTouchActive.current) return
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const touch = e.changedTouches[i]
+        if (touch.identifier === lookTouchId.current) {
+          // Check for tap (short + no movement)
+          const elapsed = Date.now() - touchStartTime.current
+          if (elapsed < 300 && !touchMoved.current) {
+            const rect = canvas.getBoundingClientRect()
+            const tapNDC = new THREE.Vector2(
+              ((touch.clientX - rect.left) / rect.width) * 2 - 1,
+              -((touch.clientY - rect.top) / rect.height) * 2 + 1
+            )
+            raycaster.current.setFromCamera(tapNDC, camera)
+            const objects = artworkGroup.current ? artworkGroup.current.children : scene.children
+            const intersects = raycaster.current.intersectObjects(objects, true)
+            const hit = intersects.find(h => h.object.userData?.portfolioItem && h.distance < 8)
+            if (hit) {
+              const tappedItem = hit.object.userData.portfolioItem as PortfolioItem
+              isTouchActive.current = false
+              moveStateRef.current = { forward: false, backward: false, left: false, right: false }
+              cbRef.current.onLockChange(false)
+              cbRef.current.onSelectItem(tappedItem)
+            }
+          }
+          lookTouchId.current = null
+          lastLookTouch.current = null
+        }
+      }
     }
 
     canvas.addEventListener('click', onClick)
@@ -444,6 +542,10 @@ function CameraController({
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
     canvas.addEventListener('wheel', onWheel, { passive: false })
+    canvas.addEventListener('touchstart', onTouchStart, { passive: false })
+    canvas.addEventListener('touchmove', onTouchMove, { passive: false })
+    canvas.addEventListener('touchend', onTouchEnd, { passive: false })
+    canvas.addEventListener('touchcancel', onTouchEnd, { passive: false })
 
     return () => {
       canvas.removeEventListener('click', onClick)
@@ -452,22 +554,34 @@ function CameraController({
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
       canvas.removeEventListener('wheel', onWheel)
+      canvas.removeEventListener('touchstart', onTouchStart)
+      canvas.removeEventListener('touchmove', onTouchMove)
+      canvas.removeEventListener('touchend', onTouchEnd)
+      canvas.removeEventListener('touchcancel', onTouchEnd)
     }
-  }, [gl, camera, totalLength])
+  }, [gl, camera, totalLength, isTouchDevice, moveStateRef, artworkGroup, scene, touchExitSignal])
 
   useFrame((_, delta) => {
     frameCount.current++
 
-    if (isLocked.current) {
+    // Handle touch exit signal
+    if (touchExitSignal.current) {
+      isTouchActive.current = false
+      moveStateRef.current = { forward: false, backward: false, left: false, right: false }
+      cbRef.current.onLockChange(false)
+      touchExitSignal.current = false
+    }
+
+    if (isLocked.current || isTouchActive.current) {
       // ---- FPS MODE ----
       const forward = new THREE.Vector3(-Math.sin(yaw.current), 0, -Math.cos(yaw.current))
       const right = new THREE.Vector3(Math.cos(yaw.current), 0, -Math.sin(yaw.current))
       const move = new THREE.Vector3()
 
-      if (moveState.current.forward) move.add(forward)
-      if (moveState.current.backward) move.sub(forward)
-      if (moveState.current.right) move.add(right)
-      if (moveState.current.left) move.sub(right)
+      if (moveStateRef.current.forward) move.add(forward)
+      if (moveStateRef.current.backward) move.sub(forward)
+      if (moveStateRef.current.right) move.add(right)
+      if (moveStateRef.current.left) move.sub(right)
 
       if (move.length() > 0) {
         move.normalize().multiplyScalar(MOVE_SPEED * delta)
@@ -532,6 +646,8 @@ function CameraController({
 export function Gallery3D({ onSelectItem }: { onSelectItem: (item: PortfolioItem) => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const artworkGroupRef = useRef<THREE.Group>(null)
+  const moveStateRef = useRef({ forward: false, backward: false, left: false, right: false })
+  const touchExitSignal = useRef(false)
   const [isLocked, setIsLocked] = useState(false)
   const [aimedItem, setAimedItem] = useState<PortfolioItem | null>(null)
 
@@ -557,7 +673,7 @@ export function Gallery3D({ onSelectItem }: { onSelectItem: (item: PortfolioItem
   }, [])
 
   return (
-    <div ref={containerRef} className="relative w-full h-[100vh] overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-[100vh] overflow-hidden" style={{ touchAction: isTouchDevice && isLocked ? 'none' : 'auto' }}>
       <Canvas
         camera={{ position: [0, FRAME_Y, 2], fov: 65, near: 0.1, far: 200 }}
         gl={{ antialias: true, alpha: false }}
@@ -590,11 +706,14 @@ export function Gallery3D({ onSelectItem }: { onSelectItem: (item: PortfolioItem
           onSelectItem={onSelectItem}
           onLockChange={setIsLocked}
           onAimedItemChange={setAimedItem}
+          isTouchDevice={isTouchDevice}
+          moveStateRef={moveStateRef}
+          touchExitSignal={touchExitSignal}
         />
       </Canvas>
 
-      {/* Crosshair (FPS mode) */}
-      {isLocked && (
+      {/* Desktop crosshair (FPS mode) */}
+      {isLocked && !isTouchDevice && (
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
           <div className={`relative w-6 h-6 transition-transform duration-200 ${aimedItem ? 'scale-150' : ''}`}>
             <div className={`absolute left-1/2 top-0 -translate-x-1/2 w-0.5 h-full rounded-full ${aimedItem ? 'bg-accent' : 'bg-white/50'}`} />
@@ -608,13 +727,32 @@ export function Gallery3D({ onSelectItem }: { onSelectItem: (item: PortfolioItem
         </div>
       )}
 
+      {/* Mobile controls overlay (FPS mode) */}
+      {isLocked && isTouchDevice && (
+        <MobileControls
+          moveStateRef={moveStateRef}
+          onExit={() => { touchExitSignal.current = true }}
+        />
+      )}
+
+      {/* Mobile aimed-item hint */}
+      {isLocked && isTouchDevice && aimedItem && (
+        <div className="absolute bottom-36 left-1/2 -translate-x-1/2 px-4 py-2 rounded-lg bg-black/70 backdrop-blur-sm text-white text-sm pointer-events-none whitespace-nowrap">
+          Tap to view: {aimedItem.title}
+        </div>
+      )}
+
       {/* Instructions overlay (not locked) */}
       {!isLocked && (
         <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
           {isTouchDevice ? (
             <div className="text-center bg-black/60 backdrop-blur-sm px-8 py-6 rounded-2xl border border-white/10">
-              <p className="text-white text-lg font-medium mb-2">Tap to explore</p>
-              <p className="text-white/60 text-sm">Use touch controls to navigate the gallery</p>
+              <p className="text-white text-lg font-medium mb-3">Tap to explore</p>
+              <div className="text-white/60 text-sm space-y-1.5">
+                <p>Drag to look around</p>
+                <p>Use joystick to move</p>
+                <p>Tap artwork to view details</p>
+              </div>
             </div>
           ) : (
             <div className="text-center bg-black/60 backdrop-blur-sm px-8 py-6 rounded-2xl border border-white/10">
@@ -639,8 +777,8 @@ export function Gallery3D({ onSelectItem }: { onSelectItem: (item: PortfolioItem
         </div>
       )}
 
-      {/* Navigation hints (FPS mode) */}
-      {isLocked && (
+      {/* Desktop navigation hints (FPS mode) */}
+      {isLocked && !isTouchDevice && (
         <div className="absolute top-4 right-4 text-white/40 text-xs bg-black/30 px-3 py-2 rounded-lg pointer-events-none">
           WASD to move &bull; Mouse to look &bull; Click artwork &bull; ESC to exit
         </div>
