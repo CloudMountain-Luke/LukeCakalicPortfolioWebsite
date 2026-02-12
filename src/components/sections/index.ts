@@ -1,0 +1,6 @@
+export { Hero } from './Hero'
+export { Services } from './Services'
+export { FeaturedWork } from './FeaturedWork'
+export { Portfolio } from './Portfolio'
+export { About } from './About'
+export { Contact } from './Contact'
