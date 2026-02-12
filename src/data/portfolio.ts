@@ -1,16 +1,16 @@
 // Import portfolio images - Web Design
-import roiHome from '../assets/images/portfolio/web/roi-home.png'
-import roiProducts from '../assets/images/portfolio/web/roi-products.png'
-import roiCaseStudies from '../assets/images/portfolio/web/roi-case-studies.png'
-import maxxgreenHome from '../assets/images/portfolio/web/maxxgreen-home.png'
-import maxxgreenProducts from '../assets/images/portfolio/web/maxxgreen-products.png'
-import maxxgreenAbout from '../assets/images/portfolio/web/maxxgreen-about.png'
+import roiHome from '../assets/images/portfolio/web/roi-home.jpg'
+import roiProducts from '../assets/images/portfolio/web/roi-products.jpg'
+import roiCaseStudies from '../assets/images/portfolio/web/roi-case-studies.jpg'
+import maxxgreenHome from '../assets/images/portfolio/web/maxxgreen-home.jpg'
+import maxxgreenProducts from '../assets/images/portfolio/web/maxxgreen-products.jpg'
+import maxxgreenAbout from '../assets/images/portfolio/web/maxxgreen-about.jpg'
 import nextlinkPortal from '../assets/images/portfolio/web/nextlink-portal.png'
 import nextlinkSignin from '../assets/images/portfolio/web/nextlink-signin.png'
 import nextlinkAccount from '../assets/images/portfolio/web/nextlink-account.png'
 import nextlinkPayments from '../assets/images/portfolio/web/nextlink-payments.png'
-import avidHome from '../assets/images/portfolio/web/avid-home.png'
-import avaHome from '../assets/images/portfolio/web/ava-home.png'
+import avidHome from '../assets/images/portfolio/web/avid-home.jpg'
+import avaHome from '../assets/images/portfolio/web/ava-home.jpg'
 
 // Import portfolio images - Vehicle Wraps
 import summitsTruckAll from '../assets/images/portfolio/vehicles/7summits-truck-all.jpg'
@@ -24,7 +24,7 @@ import foodtruckSide from '../assets/images/portfolio/vehicles/foodtruck-side.jp
 import avidLogo from '../assets/images/portfolio/brand/avid-logo.png'
 import avaLogo from '../assets/images/portfolio/brand/ava-logo.png'
 import roiLogo from '../assets/images/portfolio/brand/roi-logo.png'
-import ironbridgeLogo from '../assets/images/portfolio/brand/ironbridge-logo.png'
+import ironbridgeLogo from '../assets/images/portfolio/brand/ironbridge-logo.jpg'
 import ecoh2oLogo from '../assets/images/portfolio/brand/ecoh2o-logo.png'
 import fuelmaxxLogo from '../assets/images/portfolio/brand/fuelmaxx-logo.png'
 import ecoboostLogo from '../assets/images/portfolio/brand/ecoboost-logo.png'
@@ -32,12 +32,12 @@ import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
 import portal747Logo from '../assets/images/portfolio/brand/portal747-logo.png'
 import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo.png'
 import emberpicLogo from '../assets/images/portfolio/brand/emberpic-logo.png'
-import avidphotoproLogo from '../assets/images/portfolio/brand/avidphotopro-logo.png'
+import avidphotoproLogo from '../assets/images/portfolio/brand/avidphotopro-logo.jpg'
 
 // Import portfolio images - Print & Other
-import gnarlyFolder from '../assets/images/portfolio/print/gnarly-folder.png'
-import gnarlyCards from '../assets/images/portfolio/print/gnarly-cards.png'
-import seicentoPoster from '../assets/images/portfolio/other/seicento-poster.png'
+import gnarlyFolder from '../assets/images/portfolio/print/gnarly-folder.jpg'
+import gnarlyCards from '../assets/images/portfolio/print/gnarly-cards.jpg'
+import seicentoPoster from '../assets/images/portfolio/other/seicento-poster.jpg'
 
 export const categories = [
   'web-design',
