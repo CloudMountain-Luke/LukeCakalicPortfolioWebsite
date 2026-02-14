@@ -122,26 +122,6 @@ export function Hero() {
             </Button>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto"
-          >
-            {[
-              { value: '15+', label: 'Years Experience' },
-              { value: '40+', label: 'Clients Served' },
-              { value: '100+', label: 'Projects Completed' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-foreground-muted mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </motion.div>
         </div>
       </Container>
 

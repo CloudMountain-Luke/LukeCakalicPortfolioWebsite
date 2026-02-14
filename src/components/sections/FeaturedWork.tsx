@@ -36,6 +36,7 @@ function FeaturedCard({ item, index }: FeaturedCardProps) {
             <img
               src={item.images[0]}
               alt={item.title}
+              loading="lazy"
               className={`w-full h-full transition-transform duration-500 group-hover:scale-105 ${
                 item.imageDisplay === 'cover-top'
                   ? 'object-cover object-top'

@@ -21,7 +21,7 @@ export function FadeInOnScroll({
   once = true,
 }: FadeInOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once, margin: '-50px' })
+  const isInView = useInView(ref, { once, margin: '200px' })
 
   const getInitialPosition = () => {
     switch (direction) {
@@ -74,7 +74,7 @@ export function StaggeredReveal({
   once = true,
 }: StaggeredRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once, margin: '-50px' })
+  const isInView = useInView(ref, { once, margin: '200px' })
 
   const getInitialPosition = () => {
     switch (direction) {
@@ -178,7 +178,7 @@ export function ScaleOnScroll({
   once = true,
 }: ScaleOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once, margin: '-50px' })
+  const isInView = useInView(ref, { once, margin: '200px' })
 
   return (
     <motion.div
