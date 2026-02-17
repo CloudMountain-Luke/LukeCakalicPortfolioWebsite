@@ -65,7 +65,7 @@ export function About() {
                   them create visual identities and digital experiences that truly resonate.
                 </p>
                 <p>
-                  Based in Colorado Springs, I specialize in web design, UI/UX, vehicle wraps,
+                  Based in Colorado Springs, I specialize in web design, UI/UX,
                   and comprehensive brand identity packages. My approach combines creativity with
                   strategic thinking to deliver designs that not only look great but also achieve
                   real business results.

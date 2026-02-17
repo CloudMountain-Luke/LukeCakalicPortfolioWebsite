@@ -18,19 +18,6 @@ const services = [
   {
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8c-.1.2-.1.5-.1.7v4.6c0 .6.4 1 1 1h2"/>
-        <circle cx="7" cy="17" r="2"/>
-        <path d="M9 17h6"/>
-        <circle cx="17" cy="17" r="2"/>
-      </svg>
-    ),
-    title: 'Vehicle Wraps',
-    description: 'Eye-catching vehicle graphics that turn your fleet into mobile billboards. Full wraps, partial wraps, and custom designs.',
-    features: ['Full Wraps', 'Partial Wraps', 'Fleet Graphics', 'Custom Design'],
-  },
-  {
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 3 2 12h3v9h14v-9h3L12 3z"/>
         <path d="M12 3v6"/>
         <path d="m8 7 4-4 4 4"/>

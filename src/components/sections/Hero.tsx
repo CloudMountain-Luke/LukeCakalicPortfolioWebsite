@@ -89,7 +89,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-6 text-lg md:text-xl text-foreground-muted max-w-2xl mx-auto"
           >
-            Web design, UI/UX, vehicle wraps, and brand identity.
+            Web design, UI/UX, and brand identity.
             Bringing your vision to life with creativity and precision.
           </motion.p>
 

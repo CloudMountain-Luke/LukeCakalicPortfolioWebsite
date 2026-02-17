@@ -140,7 +140,6 @@ export function Contact() {
                     >
                       <option value="">Select a subject</option>
                       <option value="web-design">Web Design / UI/UX</option>
-                      <option value="vehicle-wrap">Vehicle Wrap</option>
                       <option value="branding">Brand Identity</option>
                       <option value="print">Print Marketing</option>
                       <option value="other">Other</option>

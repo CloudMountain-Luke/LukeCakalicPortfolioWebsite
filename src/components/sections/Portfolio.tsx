@@ -26,7 +26,6 @@ function getImageBg(display?: ImageDisplay): string {
 const categoryLabels: Record<Category | 'all', string> = {
   all: 'All Work',
   'web-design': 'Web / UI/UX',
-  'vehicle-wraps': 'Vehicle Wraps',
   'brand-identity': 'Brand Identity',
   'print-marketing': 'Print Marketing',
   'specialized': 'Specialized',

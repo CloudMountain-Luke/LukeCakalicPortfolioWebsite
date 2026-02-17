@@ -12,13 +12,6 @@ import nextlinkPayments from '../assets/images/portfolio/web/nextlink-payments.j
 import avidHome from '../assets/images/portfolio/web/avid-home.jpg'
 import avaHome from '../assets/images/portfolio/web/ava-home.jpg'
 
-// Import portfolio images - Vehicle Wraps
-import summitsTruckAll from '../assets/images/portfolio/vehicles/7summits-truck-all.jpg'
-import summitsTruckDriver from '../assets/images/portfolio/vehicles/7summits-truck-driver.jpg'
-import summitsTruckPass from '../assets/images/portfolio/vehicles/7summits-truck-pass.jpg'
-import remaxWrap1 from '../assets/images/portfolio/vehicles/remax-wrap-1.jpg'
-import remaxWrap2 from '../assets/images/portfolio/vehicles/remax-wrap-2.jpg'
-import foodtruckSide from '../assets/images/portfolio/vehicles/foodtruck-side.jpg'
 
 // Import portfolio images - Brand Identity (logos Luke designed)
 import avidLogo from '../assets/images/portfolio/brand/avid-logo.png'
@@ -41,7 +34,6 @@ import seicentoPoster from '../assets/images/portfolio/other/seicento-poster.jpg
 
 export const categories = [
   'web-design',
-  'vehicle-wraps',
   'brand-identity',
   'print-marketing',
   'specialized',
@@ -127,40 +119,6 @@ export const portfolioItems: PortfolioItem[] = [
     imageDisplay: 'cover-top',
   },
 
-  // Vehicle Wraps - SECONDARY
-  {
-    id: '7-summits-roofing',
-    title: '7 Summits Roofing Fleet',
-    client: '7 Summits Roofing',
-    category: 'vehicle-wraps',
-    description: 'Full fleet wrap design for roofing company trucks and vans. Bold, recognizable design for maximum brand visibility on the road.',
-    images: [summitsTruckAll, summitsTruckDriver, summitsTruckPass],
-    featured: false,
-    year: 2024,
-    services: ['Vehicle Wrap Design', 'Fleet Graphics', 'Brand Application'],
-  },
-  {
-    id: 'remax-vehicle-wraps',
-    title: 'RE/MAX Vehicle Wraps',
-    client: 'RE/MAX Agents',
-    category: 'vehicle-wraps',
-    description: 'Professional vehicle wrap designs for RE/MAX real estate agents. Eye-catching mobile advertising for local markets.',
-    images: [remaxWrap1, remaxWrap2],
-    featured: false,
-    year: 2023,
-    services: ['Vehicle Wrap Design', 'Brand Application'],
-  },
-  {
-    id: 'big-ds-foodtruck',
-    title: 'Big D\'s Food Truck',
-    client: 'Big D\'s Whaling City Fries',
-    category: 'vehicle-wraps',
-    description: 'Fun, vibrant food truck wrap design that attracts hungry customers and communicates the menu at a glance.',
-    images: [foodtruckSide],
-    featured: false,
-    year: 2023,
-    services: ['Vehicle Wrap Design', 'Food Truck Graphics'],
-  },
 
   // Brand Identity - Logos Luke designed
   {
