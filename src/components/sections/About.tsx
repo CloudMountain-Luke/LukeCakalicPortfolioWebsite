@@ -1,5 +1,5 @@
 import { Container } from '../layout/Container'
-import { FadeInOnScroll, StaggeredReveal } from '../shared/ScrollAnimations'
+import { FadeInOnScroll } from '../shared/ScrollAnimations'
 
 const tools = [
   'Figma',
@@ -76,52 +76,44 @@ export function About() {
                   Owned <span className="text-foreground">Cloud Mountain Graphics</span>{' '}
                   for over a decade, working with clients across green tech,
                   aerospace parts, telecom supply, manufacturing, and home
-                  inspection. Held formal UX/UI Designer roles at{' '}
-                  <span className="text-foreground">Front Range Systems</span>{' '}
-                  and <span className="text-foreground">Nextlink Internet</span>,
-                  designing customer portals and onboarding flows in Agile
-                  teams.
+                  inspection. Held formal UX/UI Designer roles at scaled
+                  software companies, designing customer portals and
+                  onboarding flows in Agile teams. Specifics on LinkedIn.
                 </p>
                 <p>
-                  The last two years I've been heads-down building five
-                  AI-native SaaS products inside CMG R&D:{' '}
+                  The last two years I have been heads-down building
+                  AI-native SaaS products inside CMG R&D. Three featured here:{' '}
                   <span className="text-foreground">Portal747</span> (an AI
                   build pipeline),{' '}
                   <span className="text-foreground">Upscale Forge</span> (a
-                  creative suite),{' '}
+                  creative suite), and{' '}
                   <span className="text-foreground">GoInspect.ai</span> (a
-                  vertical SaaS for home inspectors heading into closed beta),{' '}
-                  <span className="text-foreground">CubeRift</span> (a 3D web
-                  engine, live on this site), and{' '}
-                  <span className="text-foreground">CutBench</span> (a unified
-                  creative editor). All five are pre-launch, built and
-                  prototyped to launch readiness.
+                  vertical SaaS for home inspectors heading into closed beta).
+                  All built and prototyped to launch readiness, with others
+                  rolling out as their respective branding lands.
                 </p>
                 <p>
                   An earlier print and large-format production background is
                   where I learned production discipline. The habit of
                   preflight, calibration, and acceptance criteria carries over
-                  to digital. It's the spine of how I run projects today.
+                  to digital. It is the spine of how I run projects today.
                 </p>
                 <p className="text-foreground">
-                  What I'm looking for next: a senior product design or design
-                  engineering role at a company shipping AI-native products,
-                  where production discipline gets put to work on a team that
-                  values it. Remote preferred. On-site or hybrid in the
-                  Colorado Front Range works too.
+                  What I am looking for next: a senior product design or
+                  design engineering role at a company shipping AI-native
+                  products, where production discipline gets put to work on a
+                  team that values it. Remote preferred. On-site or hybrid in
+                  the Colorado Front Range works too.
                 </p>
               </div>
             </FadeInOnScroll>
 
-            {/* Tools */}
+            {/* Tools (plain flex-wrap, no per-item stagger to avoid layout breakage) */}
             <FadeInOnScroll direction="right" delay={0.3}>
               <h3 className="font-display text-xl font-semibold text-foreground mt-10 mb-6">
                 Stack & Tools
               </h3>
-              <StaggeredReveal
-                className="flex flex-wrap gap-2"
-                staggerDelay={0.03}
-              >
+              <div className="flex flex-wrap gap-2">
                 {tools.map((tool) => (
                   <span
                     key={tool}
@@ -130,7 +122,7 @@ export function About() {
                     {tool}
                   </span>
                 ))}
-              </StaggeredReveal>
+              </div>
             </FadeInOnScroll>
           </div>
         </div>

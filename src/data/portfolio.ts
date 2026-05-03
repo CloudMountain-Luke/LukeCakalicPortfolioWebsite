@@ -1,29 +1,21 @@
 // Portfolio images - Web Design
-import roiHome from '../assets/images/portfolio/web/roi-home.jpg'
-import roiProducts from '../assets/images/portfolio/web/roi-products.jpg'
-import roiCaseStudies from '../assets/images/portfolio/web/roi-case-studies.jpg'
 import maxxgreenHome from '../assets/images/portfolio/web/maxxgreen-home.jpg'
 import maxxgreenProducts from '../assets/images/portfolio/web/maxxgreen-products.jpg'
 import maxxgreenAbout from '../assets/images/portfolio/web/maxxgreen-about.jpg'
-import nextlinkPortal from '../assets/images/portfolio/web/nextlink-portal.jpg'
-import nextlinkSignin from '../assets/images/portfolio/web/nextlink-signin.jpg'
-import nextlinkAccount from '../assets/images/portfolio/web/nextlink-account.jpg'
-import nextlinkPayments from '../assets/images/portfolio/web/nextlink-payments.jpg'
 import avidHome from '../assets/images/portfolio/web/avid-home.jpg'
 import avaHome from '../assets/images/portfolio/web/ava-home.jpg'
 
 // Portfolio images - Brand Identity (logos for SaaS / web / digital products)
 import avidLogo from '../assets/images/portfolio/brand/avid-logo.png'
 import avaLogo from '../assets/images/portfolio/brand/ava-logo.png'
-import roiLogo from '../assets/images/portfolio/brand/roi-logo.png'
 import ironbridgeLogo from '../assets/images/portfolio/brand/ironbridge-logo.jpg'
 import ecoh2oLogo from '../assets/images/portfolio/brand/ecoh2o-logo.png'
 import fuelmaxxLogo from '../assets/images/portfolio/brand/fuelmaxx-logo.png'
 import ecoboostLogo from '../assets/images/portfolio/brand/ecoboost-logo.png'
 import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
-import portal747Logo from '../assets/images/portfolio/brand/portal747-logo.png'
+import portal747Logo from '../assets/images/portfolio/brand/portal747-logo-dark.png'
 import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo.png'
-import emberpicLogo from '../assets/images/portfolio/brand/emberpic-logo.png'
+import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo.png'
 import avidphotoproLogo from '../assets/images/portfolio/brand/avidphotopro-logo.jpg'
 
 export const categories = [
@@ -129,7 +121,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'saas-products',
     description:
       'Vertical SaaS for home inspectors. AI-native report builder trained on industry vocabulary. 14-day free trial, four subscription tiers, three credit packs. Heading into closed beta with field testers this month.',
-    images: [avidLogo],
+    images: [goinspectLogo],
     featured: true,
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'Vertical SaaS', 'AI Training'],
@@ -150,94 +142,10 @@ export const portfolioItems: PortfolioItem[] = [
         'Closed beta starting this month with first real-world inspection. Lessons: vertical SaaS UX is much easier when you have real users in the room from day one. Cost-of-AI question is constant and led to careful tier design with credits instead of unlimited usage.',
     },
   },
-  {
-    id: 'cuberift',
-    title: 'CubeRift',
-    client: 'Cloud Mountain Graphics R&D',
-    category: 'saas-products',
-    description:
-      'A 3D web experience engine that converts any 2D website into a navigable 3D space. Each page section becomes a six-sided cube the visitor moves through. Live on this site.',
-    images: [portal747Logo],
-    featured: true,
-    year: 2025,
-    services: ['3D Web', 'Design Engineering', 'WebGL', 'WebXR'],
-    imageDisplay: 'contain',
-    caseStudy: {
-      status: 'live',
-      problem:
-        'Every website is a 2D scroll. Some content rewards spatial exploration (portfolios, products, narratives, stores) but no easy way to get there without a proprietary 3D engine.',
-      approach:
-        'Convert any 2D site into a navigable 3D space, with each page section becoming a 6-sided cube. Two modes per site: classic 2D and CubeRift 3D. Toggle between them.',
-      process: [
-        'Dual-renderer architecture: Three.js for the world, CSS3D for interactive DOM panels.',
-        'Desktop orbit and FPS modes, mobile virtual joystick, WebXR for AR/VR.',
-        'Cubes connect in all six directions plus arbitrary angles.',
-        'Each cube has an invisible 3D grid; elements positioned by semantic depth (buttons foreground, paragraphs middle, images background).',
-      ],
-      outcomes:
-        'Live, used in production on this portfolio (the 3D Gallery view). Lessons on dual-render: the boundary between WebGL world and CSS3D DOM is the hardest part. Camera-coordinated state has to flow both ways. Productizing as embed and platform plugins (WordPress, Shopify) in progress.',
-    },
-  },
-  {
-    id: 'cutbench',
-    title: 'CutBench',
-    client: 'Cloud Mountain Graphics R&D',
-    category: 'saas-products',
-    description:
-      'Unified creative editor that mixes still composition (Konva), whiteboard (tldraw), animation overlays, and AI tool integration on a single canvas. Multi-platform export pipeline. Pre-launch.',
-    images: [emberpicLogo],
-    featured: true,
-    year: 2025,
-    services: ['Product Design', 'Design Engineering', 'Canvas / WebGL', 'AI Integration'],
-    imageDisplay: 'contain',
-    caseStudy: {
-      status: 'pre-launch',
-      problem:
-        'Creative editors are split across tools: Photoshop for stills, Premiere for video, Figma or Miro for canvas, After Effects for animation. AI workflows want them unified so agents can drive the editor programmatically.',
-      approach:
-        'Single canvas mixing Konva (stills) and tldraw (whiteboard), with animation overlays on top and AI tool integration through a programmatic Tool API. Multi-platform export takes one composition and fans it out to platform-correct dimensions.',
-      process: [
-        '10-phase build plan, all phases shipped through Phase 7B.',
-        'FFmpeg filter graphs for the multiplatform export side.',
-        'Tool API layer so AI agents can drive the editor programmatically.',
-        'Animation system uses percent-based positioning so output adapts to any aspect ratio.',
-      ],
-      outcomes:
-        'Pre-launch. Phase 7B (multiplatform export via FFmpeg filter graphs) completed 2026-05-01. Lessons: the AI-driven creative editor category is wide open, but the hard part is making the canvas state machine deterministic enough that agents can reason about it.',
-    },
-  },
 
   // ============================================
   // Web Design / UI/UX (client work)
   // ============================================
-  {
-    id: 'roi-global-tech',
-    title: 'ROI Global Tech Website',
-    client: 'ROI Global Technologies',
-    category: 'web-design',
-    description:
-      'Full website redesign for a military and aerospace parts supplier. Led UX strategy, information architecture, and responsive UI design for product catalog and inquiry system.',
-    images: [roiHome, roiProducts, roiCaseStudies],
-    featured: true,
-    year: 2024,
-    services: ['Web Design', 'UI/UX', 'Information Architecture', 'Responsive Design'],
-    imageDisplay: 'cover-top',
-    caseStudy: {
-      status: 'shipped',
-      problem:
-        'A military and aerospace parts supplier needed a website that worked as both catalog and inquiry-generation engine. Complex SKUs, technical buyers, B2B audience that does not tolerate friction.',
-      approach:
-        'Information architecture redesign putting product taxonomy and inquiry flow up front. Authoritative visual brand to match the audience.',
-      process: [
-        'User research interviews with the sales team to map common buyer questions.',
-        'IA documentation and sitemap before any visual design.',
-        'Wireframes through high-fidelity prototypes in Figma.',
-        'Responsive build with attention to fast load on industrial networks.',
-      ],
-      outcomes:
-        'Site shipped. Sales team uses it as their pitch tool inside customer calls. Inquiry volume up. Cleanest test of the production-grade process delivered to a client.',
-    },
-  },
   {
     id: 'maxxgreen-technologies',
     title: 'MAXXGreen Technologies',
@@ -264,34 +172,6 @@ export const portfolioItems: PortfolioItem[] = [
       ],
       outcomes:
         'Site launched. Sub-brand product pages convert across the catalog. The unified system means new product additions slot in without redesign.',
-    },
-  },
-  {
-    id: 'nextlink-portal',
-    title: 'Customer Portal UI Design',
-    client: 'Nextlink Internet',
-    category: 'web-design',
-    description:
-      'UI/UX design for an ISP customer self-service portal. Created intuitive dashboard with account management, billing, and service request flows. Wireframes through high-fidelity mockups.',
-    images: [nextlinkPortal, nextlinkSignin, nextlinkAccount, nextlinkPayments],
-    featured: true,
-    year: 2023,
-    services: ['UI/UX Design', 'Dashboard Design', 'Prototyping', 'Agile / Scrum'],
-    imageDisplay: 'cover-top',
-    caseStudy: {
-      status: 'shipped',
-      problem:
-        'ISP customers needed self-service for billing, plan changes, and support, but the legacy portal forced too many calls into the support center on tasks that should have been one-click.',
-      approach:
-        'Redesign with clear primary tasks at the top of the dashboard, reduced step counts on common actions, mobile-first responsive layout.',
-      process: [
-        'User research interviews with current customers.',
-        'Wireframes through high-fidelity Figma mockups.',
-        'Stakeholder presentations and iterative refinement with product, engineering, and support.',
-        'Handoff to dev team with a documented design system.',
-      ],
-      outcomes:
-        'Designs delivered and implemented by the Nextlink dev team. Reduced support call volume on common self-service tasks. Reference project for Agile-team UX delivery.',
     },
   },
   {
@@ -335,19 +215,6 @@ export const portfolioItems: PortfolioItem[] = [
     featured: false,
     year: 2024,
     services: ['Logo Design', 'Brand System', 'Product Branding'],
-    imageDisplay: 'contain',
-  },
-  {
-    id: 'roi-global-brand',
-    title: 'ROI Global Technologies Logo',
-    client: 'ROI Global Technologies',
-    category: 'brand-identity',
-    description:
-      'Authoritative logo design for a military and aerospace parts supplier. Clean, technical mark that pairs with the catalog site.',
-    images: [roiLogo],
-    featured: false,
-    year: 2024,
-    services: ['Logo Design', 'Brand Identity'],
     imageDisplay: 'contain',
   },
   {
@@ -411,14 +278,14 @@ export const portfolioItems: PortfolioItem[] = [
     imageDisplay: 'contain',
   },
   {
-    id: 'emberpic',
-    title: 'EmberPic Logo',
-    client: 'EmberPic',
+    id: 'goinspect-brand',
+    title: 'GoInspect.ai Logo',
+    client: 'GoInspect.ai',
     category: 'brand-identity',
-    description: 'Brand identity for a photo enhancement platform.',
-    images: [emberpicLogo],
+    description: 'Logo and brand mark for a vertical SaaS for home inspectors.',
+    images: [goinspectLogo],
     featured: false,
-    year: 2024,
+    year: 2025,
     services: ['Logo Design', 'Brand Identity', 'SaaS Branding'],
     imageDisplay: 'contain',
   },

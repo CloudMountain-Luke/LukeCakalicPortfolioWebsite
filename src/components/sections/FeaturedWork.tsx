@@ -31,7 +31,7 @@ function FeaturedCard({ item, index }: FeaturedCardProps) {
           <motion.div
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            className={`relative rounded-2xl overflow-hidden border border-border ${item.imageDisplay === 'cover-top' ? 'aspect-[16/9]' : 'aspect-[16/10]'}`}
+            className={`relative rounded-2xl overflow-hidden border border-border ${item.imageDisplay === 'cover-top' ? 'aspect-[16/6]' : 'aspect-[16/10]'}`}
           >
             <img
               src={item.images[0]}

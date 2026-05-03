@@ -22,6 +22,12 @@ function getImageBg(display?: ImageDisplay): string {
   return display === 'contain' ? 'bg-background-tertiary' : ''
 }
 
+function getTileAspect(display?: ImageDisplay): string {
+  // Cover-top tiles show only the header band of website screenshots.
+  // Contain tiles keep a more square ratio so logos display well.
+  return display === 'cover-top' ? 'aspect-[16/9]' : 'aspect-[4/3]'
+}
+
 const categoryLabels: Record<Category | 'all', string> = {
   all: 'All Work',
   'saas-products': 'SaaS Products',
@@ -37,7 +43,8 @@ const statusLabels: Record<NonNullable<NonNullable<PortfolioItem['caseStudy']>['
 }
 
 export function Portfolio() {
-  const [viewMode, setViewMode] = useState<'gallery' | 'grid'>('gallery')
+  // Default to grid view: lighter on the browser, 3D Canvas only mounts when toggled.
+  const [viewMode, setViewMode] = useState<'gallery' | 'grid'>('grid')
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all')
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
@@ -135,7 +142,7 @@ export function Portfolio() {
               My <span className="gradient-accent">Portfolio</span>
             </h2>
             <p className="section-subheading mt-4 mx-auto">
-              Five SaaS products and a decade of client work. Click any tile for the case study.
+              Three SaaS products and a decade of client work. Click any tile for the case study.
             </p>
 
             <div className="flex justify-center gap-2 mt-6">
@@ -199,7 +206,7 @@ export function Portfolio() {
                     onClick={() => openLightbox(item)}
                     className="group w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
                   >
-                    <div className={`relative aspect-[4/3] overflow-hidden ${getImageBg(item.imageDisplay)}`}>
+                    <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item.imageDisplay)}`}>
                       <img
                         src={item.images[0]}
                         alt={item.title}
@@ -248,7 +255,6 @@ export function Portfolio() {
       <AnimatedDialog open={selectedItem !== null} onOpenChange={() => closeLightbox()}>
         {selectedItem && (
           <div className="bg-background-secondary rounded-2xl border border-border overflow-hidden max-h-[90vh] flex flex-col">
-            {/* Image */}
             <div className="relative flex-shrink-0">
               <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''}`}>
                 <AnimatePresence mode="wait">
@@ -291,7 +297,6 @@ export function Portfolio() {
               )}
             </div>
 
-            {/* Info + case study (scrollable) */}
             <div className="overflow-y-auto p-6 border-t border-border">
               <div className="flex items-center gap-3 flex-wrap mb-2">
                 <span className="text-accent text-sm font-medium uppercase tracking-wider">
@@ -324,7 +329,6 @@ export function Portfolio() {
                 </div>
               )}
 
-              {/* Case study deep dive */}
               {selectedItem.caseStudy && (
                 <div className="mt-8 pt-8 border-t border-border space-y-6">
                   <div>
