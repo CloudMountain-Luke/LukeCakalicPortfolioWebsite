@@ -16,7 +16,6 @@ import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
 import portal747Logo from '../assets/images/portfolio/brand/portal747-logo-dark.png'
 import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo.png'
 import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo.png'
-import goinspectLogoPortrait from '../assets/images/portfolio/brand/goinspect-logo-portrait.png'
 import avidphotoproLogo from '../assets/images/portfolio/brand/avidphotopro-logo.jpg'
 
 export const categories = [
@@ -130,14 +129,12 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'saas-products',
     description:
       'Vertical SaaS for home inspectors. AI-native report builder trained on industry vocabulary. 14-day free trial, four subscription tiers, three credit packs. Heading into closed beta with field testers this month.',
-    images: [goinspectLogoPortrait],
+    images: [goinspectLogo],
     featured: true,
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'Vertical SaaS', 'AI Training'],
     imageDisplay: 'contain',
-    // Mark is dense; cap its rendered width so it reads smaller than the
-    // surrounding tile and does not dominate next to Portal747.
-    imageMaxWidth: '150px',
+    imageMaxWidth: '45%',
     caseStudy: {
       status: 'closed-beta',
       problem:
@@ -303,7 +300,7 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2025,
     services: ['Logo Design', 'Brand Identity', 'SaaS Branding'],
     imageDisplay: 'contain',
-    imageMaxWidth: '150px',
+    imageMaxWidth: '45%',
   },
   {
     id: 'avid-photo-pro',
