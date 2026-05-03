@@ -252,6 +252,7 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2023,
     services: ['Logo Design', 'Brand Identity'],
     imageDisplay: 'contain',
+    imageMaxWidth: '60%',
   },
   {
     id: 'avid-brand',
@@ -264,6 +265,7 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2023,
     services: ['Logo Design', 'Brand Identity'],
     imageDisplay: 'contain',
+    imageMaxWidth: '75%',
   },
   {
     id: 'ava-brand',
@@ -289,6 +291,7 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2024,
     services: ['Logo Design', 'Brand Identity', 'SaaS Branding'],
     imageDisplay: 'contain',
+    imageMaxWidth: '45%',
   },
   {
     id: 'portal747-brand',
