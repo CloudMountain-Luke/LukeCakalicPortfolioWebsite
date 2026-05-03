@@ -14,7 +14,7 @@ import fuelmaxxLogo from '../assets/images/portfolio/brand/fuelmaxx-logo.png'
 import ecoboostLogo from '../assets/images/portfolio/brand/ecoboost-logo.png'
 import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
 import portal747Logo from '../assets/images/portfolio/brand/portal747-logo-dark.png'
-import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo.png'
+import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo-transparent.png'
 import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo.png'
 import avidphotoproLogo from '../assets/images/portfolio/brand/avidphotopro-logo.jpg'
 
