@@ -31,19 +31,24 @@ function FeaturedCard({ item, index }: FeaturedCardProps) {
           <motion.div
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            className={`relative rounded-2xl overflow-hidden border border-border ${item.imageDisplay === 'cover-top' ? 'aspect-[16/6]' : 'aspect-[16/10]'}`}
+            className={`relative rounded-2xl overflow-hidden border border-border ${item.imageDisplay === 'cover-top' ? 'aspect-[16/6]' : 'aspect-[16/10]'} ${item.imageMaxWidth ? 'flex items-center justify-center bg-background-tertiary' : ''}`}
           >
             <img
               src={item.images[0]}
               alt={item.title}
               loading="lazy"
-              className={`w-full h-full transition-transform duration-500 group-hover:scale-105 ${
-                item.imageDisplay === 'cover-top'
-                  ? 'object-cover object-top'
-                  : item.imageDisplay === 'contain'
-                  ? 'object-contain p-4'
-                  : 'object-cover'
-              }`}
+              className={
+                item.imageMaxWidth
+                  ? 'h-auto object-contain transition-transform duration-500 group-hover:scale-105'
+                  : `w-full h-full transition-transform duration-500 group-hover:scale-105 ${
+                      item.imageDisplay === 'cover-top'
+                        ? 'object-cover object-top'
+                        : item.imageDisplay === 'contain'
+                        ? 'object-contain p-4'
+                        : 'object-cover'
+                    }`
+              }
+              style={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </motion.div>
