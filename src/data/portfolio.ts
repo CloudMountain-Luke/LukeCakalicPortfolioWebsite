@@ -7,6 +7,7 @@ import avaHome from '../assets/images/portfolio/web/ava-home.jpg'
 import portal747Home from '../assets/images/portfolio/web/portal747-home.png'
 import upscaleforgeHome from '../assets/images/portfolio/web/upscaleforge-home.png'
 import goinspectHome from '../assets/images/portfolio/web/goinspect-home.png'
+import ironbridgeHome from '../assets/images/portfolio/web/ironbridge-home.webp'
 
 // Portfolio images - Brand Identity (logos for SaaS / web / digital products)
 import avidLogo from '../assets/images/portfolio/brand/avid-logo-dark.svg'
@@ -183,6 +184,19 @@ export const portfolioItems: PortfolioItem[] = [
       outcomes:
         'Site launched. Sub-brand product pages convert across the catalog. The unified system means new product additions slot in without redesign.',
     },
+  },
+  {
+    id: 'iron-bridge-web',
+    title: 'Iron Bridge Manufacturing Website',
+    client: 'Iron Bridge Manufacturing & Trading',
+    category: 'web-design',
+    description:
+      'Industrial manufacturing and trading website. Dark-mode brand presentation with a product showcase across multiple sub-brand lines (EcoH2O, FuelMAXX, Pro Equipment).',
+    images: [ironbridgeHome],
+    featured: false,
+    year: 2024,
+    services: ['Web Design', 'UI/UX', 'Brand Presentation'],
+    imageDisplay: 'cover-top',
   },
   {
     id: 'avid-inspection',
