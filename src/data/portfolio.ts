@@ -4,6 +4,9 @@ import maxxgreenProducts from '../assets/images/portfolio/web/maxxgreen-products
 import maxxgreenAbout from '../assets/images/portfolio/web/maxxgreen-about.jpg'
 import avidHome from '../assets/images/portfolio/web/avid-home.jpg'
 import avaHome from '../assets/images/portfolio/web/ava-home.jpg'
+import portal747Home from '../assets/images/portfolio/web/portal747-home.png'
+import upscaleforgeHome from '../assets/images/portfolio/web/upscaleforge-home.png'
+import goinspectHome from '../assets/images/portfolio/web/goinspect-home.png'
 
 // Portfolio images - Brand Identity (logos for SaaS / web / digital products)
 import avidLogo from '../assets/images/portfolio/brand/avid-logo.png'
@@ -16,7 +19,6 @@ import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
 import portal747Logo from '../assets/images/portfolio/brand/portal747-logo-dark.png'
 import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo-transparent.png'
 import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo.png'
-import avidphotoproLogo from '../assets/images/portfolio/brand/avidphotopro-logo.jpg'
 
 export const categories = [
   'saas-products',
@@ -70,11 +72,11 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'saas-products',
     description:
       'AI Business-in-a-Box. A 23-agent build pipeline that takes a single prompt and produces a full brand and marketing site, copy, image set, video shots, and social posts. Pre-launch.',
-    images: [portal747Logo],
+    images: [portal747Home],
     featured: true,
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'AI Agent Systems', 'Brand Systems'],
-    imageDisplay: 'contain',
+    imageDisplay: 'cover-top',
     caseStudy: {
       status: 'pre-launch',
       problem:
@@ -100,11 +102,11 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'saas-products',
     description:
       'AI image and video creative suite. Tiered subscription with browser-side ESRGAN for the free tier and a server-side pipeline for higher resolutions and AI generation. Pre-launch.',
-    images: [upscaleforgeLogo],
+    images: [upscaleforgeHome],
     featured: true,
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'Stripe Subscriptions', 'AI Tooling'],
-    imageDisplay: 'contain',
+    imageDisplay: 'cover-top',
     caseStudy: {
       status: 'pre-launch',
       problem:
@@ -129,12 +131,11 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'saas-products',
     description:
       'Vertical SaaS for home inspectors. AI-native report builder trained on industry vocabulary. 14-day free trial, four subscription tiers, three credit packs. Heading into closed beta with field testers this month.',
-    images: [goinspectLogo],
+    images: [goinspectHome],
     featured: true,
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'Vertical SaaS', 'AI Training'],
-    imageDisplay: 'contain',
-    imageMaxWidth: '45%',
+    imageDisplay: 'cover-top',
     caseStudy: {
       status: 'closed-beta',
       problem:
@@ -264,6 +265,7 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2022,
     services: ['Logo Design', 'Brand Identity'],
     imageDisplay: 'contain',
+    imageMaxWidth: '60%',
   },
   {
     id: 'upscale-forge-brand',
@@ -300,18 +302,6 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2025,
     services: ['Logo Design', 'Brand Identity', 'SaaS Branding'],
     imageDisplay: 'contain',
-    imageMaxWidth: '45%',
-  },
-  {
-    id: 'avid-photo-pro',
-    title: 'AVID Photo Pro Logo',
-    client: 'AVID Photo Pro',
-    category: 'brand-identity',
-    description: 'Logo for a photography services brand.',
-    images: [avidphotoproLogo],
-    featured: false,
-    year: 2023,
-    services: ['Logo Design', 'Brand Identity'],
-    imageDisplay: 'contain',
+    imageMaxWidth: '60%',
   },
 ]
