@@ -21,8 +21,12 @@ function getImageClasses(display?: ImageDisplay): string {
   }
 }
 
-function getImageBg(display?: ImageDisplay): string {
-  return display === 'contain' ? 'bg-background-tertiary' : ''
+function getImageBg(item: PortfolioItem): string {
+  if (item.imageDisplay !== 'contain') return ''
+  // Logos designed for light backgrounds get a white card so dark text
+  // and subtitles stay readable.
+  if (item.lightCardBg) return 'bg-white'
+  return 'bg-background-tertiary'
 }
 
 function getTileAspect(display?: ImageDisplay): string {
@@ -207,7 +211,7 @@ export function Portfolio() {
                     onClick={() => openLightbox(item)}
                     className="group w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
                   >
-                    <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item.imageDisplay)}`}>
+                    <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item)}`}>
                       <img
                         src={item.images[0]}
                         alt={item.title}
@@ -256,7 +260,7 @@ export function Portfolio() {
         {selectedItem && (
           <div className="bg-background-secondary rounded-2xl border border-border overflow-hidden max-h-[90vh] flex flex-col">
             <div className="relative flex-shrink-0">
-              <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''}`}>
+              <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''} ${selectedItem.lightCardBg ? 'bg-white' : ''}`}>
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={selectedImageIndex}

@@ -50,6 +50,10 @@ export interface PortfolioItem {
   imageDisplay?: ImageDisplay
   caseStudy?: CaseStudy
   link?: string
+  // For logos designed for light backgrounds (e.g. dark text on transparent
+  // PNG). Renders the card / lightbox image area on white so the logo's
+  // dark elements stay readable.
+  lightCardBg?: boolean
 }
 
 export const portfolioItems: PortfolioItem[] = [
@@ -241,6 +245,9 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2023,
     services: ['Logo Design', 'Brand Identity'],
     imageDisplay: 'contain',
+    // Logo's "INSPECTION SPECIALISTS" subtitle is dark grey on transparent
+    // bg, so it disappears on the default dark card. Show on white.
+    lightCardBg: true,
   },
   {
     id: 'ava-brand',
