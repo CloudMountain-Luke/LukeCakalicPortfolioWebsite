@@ -54,6 +54,10 @@ export interface PortfolioItem {
   // PNG). Renders the card / lightbox image area on white so the logo's
   // dark elements stay readable.
   lightCardBg?: boolean
+  // Override the default p-4 padding around 'contain' logos. Use when the
+  // source PNG has no built-in margin and the logo visually overflows the
+  // card relative to neighbours that do have margin baked in.
+  imagePadClass?: string
 }
 
 export const portfolioItems: PortfolioItem[] = [
@@ -131,6 +135,9 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'Vertical SaaS', 'AI Training'],
     imageDisplay: 'contain',
+    // Source PNG has no transparent margin so the logo overflows compared
+    // to Portal747's mark, which has padding baked in. Add it here.
+    imagePadClass: 'p-12',
     caseStudy: {
       status: 'closed-beta',
       problem:

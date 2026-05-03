@@ -10,12 +10,12 @@ import { portfolioItems, categories, type PortfolioItem, type Category, type Ima
 
 const Gallery3D = lazy(() => import('./Gallery3D').then(m => ({ default: m.Gallery3D })))
 
-function getImageClasses(display?: ImageDisplay): string {
-  switch (display) {
+function getImageClasses(item: PortfolioItem): string {
+  switch (item.imageDisplay) {
     case 'cover-top':
       return 'object-cover object-top'
     case 'contain':
-      return 'object-contain p-4'
+      return `object-contain ${item.imagePadClass ?? 'p-4'}`
     default:
       return 'object-cover'
   }
@@ -215,7 +215,7 @@ export function Portfolio() {
                       <img
                         src={item.images[0]}
                         alt={item.title}
-                        className={`w-full h-full ${getImageClasses(item.imageDisplay)} transition-transform duration-500 group-hover:scale-105`}
+                        className={`w-full h-full ${getImageClasses(item)} transition-transform duration-500 group-hover:scale-105`}
                         loading="lazy"
                       />
                       {item.caseStudy?.status && (
