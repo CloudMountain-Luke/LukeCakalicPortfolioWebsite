@@ -9,7 +9,7 @@ import upscaleforgeHome from '../assets/images/portfolio/web/upscaleforge-home.p
 import goinspectHome from '../assets/images/portfolio/web/goinspect-home.png'
 
 // Portfolio images - Brand Identity (logos for SaaS / web / digital products)
-import avidLogo from '../assets/images/portfolio/brand/avid-logo.png'
+import avidLogo from '../assets/images/portfolio/brand/avid-logo-dark.svg'
 import avaLogo from '../assets/images/portfolio/brand/ava-logo.png'
 import ironbridgeLogo from '../assets/images/portfolio/brand/ironbridge-logo-dark.webp'
 import ecoh2oLogo from '../assets/images/portfolio/brand/ecoh2o-logo.png'
@@ -250,9 +250,6 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2023,
     services: ['Logo Design', 'Brand Identity'],
     imageDisplay: 'contain',
-    // Logo's "INSPECTION SPECIALISTS" subtitle is dark grey on transparent
-    // bg, so it disappears on the default dark card. Show on white.
-    lightCardBg: true,
   },
   {
     id: 'ava-brand',
