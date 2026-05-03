@@ -8,7 +8,7 @@ import avaHome from '../assets/images/portfolio/web/ava-home.jpg'
 // Portfolio images - Brand Identity (logos for SaaS / web / digital products)
 import avidLogo from '../assets/images/portfolio/brand/avid-logo.png'
 import avaLogo from '../assets/images/portfolio/brand/ava-logo.png'
-import ironbridgeLogo from '../assets/images/portfolio/brand/ironbridge-logo.jpg'
+import ironbridgeLogo from '../assets/images/portfolio/brand/ironbridge-logo.png'
 import ecoh2oLogo from '../assets/images/portfolio/brand/ecoh2o-logo.png'
 import fuelmaxxLogo from '../assets/images/portfolio/brand/fuelmaxx-logo.png'
 import ecoboostLogo from '../assets/images/portfolio/brand/ecoboost-logo.png'
