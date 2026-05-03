@@ -1,5 +1,8 @@
 import { useState, useMemo, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+// AnimatePresence is still used inside the lightbox image transition.
+// motion.div is still used inside the lightbox; the grid no longer uses
+// either, which improves scroll perf.
 import { Container } from '../layout/Container'
 import { FadeInOnScroll } from '../shared/ScrollAnimations'
 import { AnimatedDialog } from '../ui/Dialog'
@@ -191,17 +194,15 @@ export function Portfolio() {
             ))}
           </FadeInOnScroll>
 
-          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence mode="popLayout">
+          {/*
+           * Plain grid: no `layout` prop, no AnimatePresence. Filter
+           * changes mount/unmount items without FLIP animations. This
+           * removes the per-tile layout watchers that were running during
+           * scroll and contributing to the slow / jumpy feel.
+           */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map((item) => (
-                <motion.div
-                  key={item.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <div key={item.id} className="animate-fade-in-up">
                   <button
                     onClick={() => openLightbox(item)}
                     className="group w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
@@ -238,10 +239,9 @@ export function Portfolio() {
                       )}
                     </div>
                   </button>
-                </motion.div>
+                </div>
               ))}
-            </AnimatePresence>
-          </motion.div>
+          </div>
 
           {filteredItems.length === 0 && (
             <div className="text-center py-12">

@@ -16,6 +16,7 @@ import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
 import portal747Logo from '../assets/images/portfolio/brand/portal747-logo-dark.png'
 import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo.png'
 import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo.png'
+import goinspectLogoPortrait from '../assets/images/portfolio/brand/goinspect-logo-portrait.png'
 import avidphotoproLogo from '../assets/images/portfolio/brand/avidphotopro-logo.jpg'
 
 export const categories = [
@@ -121,7 +122,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'saas-products',
     description:
       'Vertical SaaS for home inspectors. AI-native report builder trained on industry vocabulary. 14-day free trial, four subscription tiers, three credit packs. Heading into closed beta with field testers this month.',
-    images: [goinspectLogo],
+    images: [goinspectLogoPortrait],
     featured: true,
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'Vertical SaaS', 'AI Training'],

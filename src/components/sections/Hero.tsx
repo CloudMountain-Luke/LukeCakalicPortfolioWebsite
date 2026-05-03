@@ -12,35 +12,19 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/*
+       * Static blurred background. Previously used animated motion.div orbs
+       * with blur-[100px] and infinite position/scale loops. Framer Motion
+       * keeps those animations running even when the section is scrolled
+       * out of view, which kept the GPU repainting massive blurred areas
+       * every frame and caused page-wide scroll lag. Static divs give the
+       * same look at zero ongoing cost.
+       */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background" />
 
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent/10 blur-[100px]"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-purple-500/10 blur-[100px]"
-          animate={{
-            x: [0, -40, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent/10 blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-purple-500/10 blur-[100px]" />
 
         <div
           className="absolute inset-0 opacity-[0.02]"
@@ -155,21 +139,17 @@ export function Hero() {
         </div>
       </Container>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-6 h-10 rounded-full border-2 border-foreground-subtle flex items-start justify-center p-2"
-        >
-          <motion.div className="w-1.5 h-1.5 rounded-full bg-foreground-muted" />
-        </motion.div>
-      </motion.div>
+      {/*
+       * Scroll indicator using CSS animate-bounce instead of an infinite
+       * Framer Motion loop. CSS keyframe animations are GPU-composited and
+       * cheap; the previous JS-driven motion.div looped forever and added
+       * to the scroll-jank.
+       */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="w-6 h-10 rounded-full border-2 border-foreground-subtle flex items-start justify-center p-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-foreground-muted" />
+        </div>
+      </div>
     </section>
   )
 }
