@@ -15,7 +15,7 @@ function getImageClasses(item: PortfolioItem): string {
     case 'cover-top':
       return 'object-cover object-top'
     case 'contain':
-      return `object-contain ${item.imagePadClass ?? 'p-4'}`
+      return 'object-contain p-4'
     default:
       return 'object-cover'
   }
@@ -211,11 +211,16 @@ export function Portfolio() {
                     onClick={() => openLightbox(item)}
                     className="group w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
                   >
-                    <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item)}`}>
+                    <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item)} ${item.imageMaxWidth ? 'flex items-center justify-center' : ''}`}>
                       <img
                         src={item.images[0]}
                         alt={item.title}
-                        className={`w-full h-full ${getImageClasses(item)} transition-transform duration-500 group-hover:scale-105`}
+                        className={
+                          item.imageMaxWidth
+                            ? 'h-auto object-contain transition-transform duration-500 group-hover:scale-105'
+                            : `w-full h-full ${getImageClasses(item)} transition-transform duration-500 group-hover:scale-105`
+                        }
+                        style={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
                         loading="lazy"
                       />
                       {item.caseStudy?.status && (
@@ -260,13 +265,18 @@ export function Portfolio() {
         {selectedItem && (
           <div className="bg-background-secondary rounded-2xl border border-border overflow-hidden max-h-[90vh] flex flex-col">
             <div className="relative flex-shrink-0">
-              <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''} ${selectedItem.lightCardBg ? 'bg-white' : ''}`}>
+              <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''} ${selectedItem.lightCardBg ? 'bg-white' : ''} ${selectedItem.imageMaxWidth ? 'flex items-center justify-center py-8 bg-background-tertiary' : ''}`}>
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={selectedImageIndex}
                     src={selectedItem.images[selectedImageIndex]}
                     alt={selectedItem.title}
-                    className={`w-full ${selectedItem.imageDisplay === 'cover-top' ? 'h-auto' : 'h-full max-h-[50vh] object-contain'}`}
+                    className={
+                      selectedItem.imageMaxWidth
+                        ? 'h-auto object-contain'
+                        : `w-full ${selectedItem.imageDisplay === 'cover-top' ? 'h-auto' : 'h-full max-h-[50vh] object-contain'}`
+                    }
+                    style={selectedItem.imageMaxWidth ? { maxWidth: selectedItem.imageMaxWidth } : undefined}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}

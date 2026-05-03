@@ -54,10 +54,10 @@ export interface PortfolioItem {
   // PNG). Renders the card / lightbox image area on white so the logo's
   // dark elements stay readable.
   lightCardBg?: boolean
-  // Override the default p-4 padding around 'contain' logos. Use when the
-  // source PNG has no built-in margin and the logo visually overflows the
-  // card relative to neighbours that do have margin baked in.
-  imagePadClass?: string
+  // Pin a maximum on-card / in-lightbox width for logos that need to read
+  // smaller than the default contain fit (e.g. dense PNGs without baked-in
+  // transparent margin). Use a CSS length string like '150px'.
+  imageMaxWidth?: string
 }
 
 export const portfolioItems: PortfolioItem[] = [
@@ -135,9 +135,9 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2025,
     services: ['Product Design', 'Design Engineering', 'Vertical SaaS', 'AI Training'],
     imageDisplay: 'contain',
-    // Source PNG has no transparent margin so the logo overflows compared
-    // to Portal747's mark, which has padding baked in. Add it here.
-    imagePadClass: 'p-12',
+    // Mark is dense; cap its rendered width so it reads smaller than the
+    // surrounding tile and does not dominate next to Portal747.
+    imageMaxWidth: '150px',
     caseStudy: {
       status: 'closed-beta',
       problem:
@@ -303,6 +303,7 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2025,
     services: ['Logo Design', 'Brand Identity', 'SaaS Branding'],
     imageDisplay: 'contain',
+    imageMaxWidth: '150px',
   },
   {
     id: 'avid-photo-pro',
