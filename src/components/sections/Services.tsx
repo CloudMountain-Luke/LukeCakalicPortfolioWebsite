@@ -11,9 +11,10 @@ const services = [
         <path d="M9 21V9"/>
       </svg>
     ),
-    title: 'Web Design & UI/UX',
-    description: 'Modern, responsive websites and web applications with intuitive user experiences that drive engagement and conversions.',
-    features: ['Responsive Design', 'User Research', 'Prototyping', 'Design Systems'],
+    title: 'Web Design + UI/UX',
+    description:
+      'Marketing sites, dashboards, and customer portals built around the work the user actually has to do. Research, IA, wireframes, hi-fi design, responsive build.',
+    features: ['User Research', 'Information Architecture', 'Prototyping', 'Design Systems', 'Responsive Build'],
   },
   {
     icon: (
@@ -23,40 +24,44 @@ const services = [
         <path d="m8 7 4-4 4 4"/>
       </svg>
     ),
-    title: 'Brand Identity',
-    description: 'Distinctive logos and comprehensive brand systems that communicate your values and resonate with your audience.',
-    features: ['Logo Design', 'Brand Guidelines', 'Visual Identity', 'Brand Strategy'],
+    title: 'Brand Identity for Digital Products',
+    description:
+      'Logo, type, color, and component-level brand systems that hold up across product surfaces, marketing, and growth. Built to scale across sub-brands.',
+    features: ['Logo Design', 'Brand Systems', 'Visual Identity', 'Brand Strategy', 'Design Tokens'],
   },
   {
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
-        <path d="M18 14h-8"/>
-        <path d="M15 18h-5"/>
-        <path d="M10 6h8v4h-8V6Z"/>
+        <path d="M12 2 2 7l10 5 10-5-10-5Z"/>
+        <path d="m2 17 10 5 10-5"/>
+        <path d="m2 12 10 5 10-5"/>
       </svg>
     ),
-    title: 'Print Marketing',
-    description: 'High-impact print materials from business cards to trade show displays. Designs that make a lasting impression.',
-    features: ['Brochures', 'Business Cards', 'Trade Show Graphics', 'Large Format'],
+    title: 'AI-Native Product Engineering',
+    description:
+      'End-to-end SaaS builds with React, TypeScript, Supabase, and AI provider routing. Stripe checkout, edge functions, agent orchestration. The pipeline that ships my own products is the same one I bring to client work.',
+    features: ['React + TypeScript', 'Supabase / Edge Functions', 'Stripe Integration', 'AI Agent Systems', 'Production Deploys'],
   },
 ]
 
 export function Services() {
   return (
-    <section id="services" className="py-24 md:py-32 bg-background-secondary">
+    <section id="services" className="py-24 md:py-32">
       <Container>
         <FadeInOnScroll className="text-center mb-16">
-          <h2 className="section-heading">
-            What I <span className="gradient-accent">Offer</span>
+          <span className="text-accent text-sm font-medium uppercase tracking-wider">
+            What I Do
+          </span>
+          <h2 className="section-heading mt-4">
+            Three things, <span className="gradient-accent">all in service of shipping</span>
           </h2>
           <p className="section-subheading mt-4 mx-auto">
-            Comprehensive design services to elevate your brand across digital and physical touchpoints.
+            Design, brand, and engineering, run by one person, on the same process.
           </p>
         </FadeInOnScroll>
 
         <StaggeredReveal
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
           staggerDelay={0.1}
         >
           {services.map((service) => (

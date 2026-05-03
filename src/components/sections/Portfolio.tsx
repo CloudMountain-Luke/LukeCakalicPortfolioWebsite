@@ -5,7 +5,6 @@ import { FadeInOnScroll } from '../shared/ScrollAnimations'
 import { AnimatedDialog } from '../ui/Dialog'
 import { portfolioItems, categories, type PortfolioItem, type Category, type ImageDisplay } from '../../data/portfolio'
 
-// Lazy load 3D gallery to avoid loading Three.js upfront
 const Gallery3D = lazy(() => import('./Gallery3D').then(m => ({ default: m.Gallery3D })))
 
 function getImageClasses(display?: ImageDisplay): string {
@@ -25,10 +24,16 @@ function getImageBg(display?: ImageDisplay): string {
 
 const categoryLabels: Record<Category | 'all', string> = {
   all: 'All Work',
+  'saas-products': 'SaaS Products',
   'web-design': 'Web / UI/UX',
   'brand-identity': 'Brand Identity',
-  'print-marketing': 'Print Marketing',
-  'specialized': 'Specialized',
+}
+
+const statusLabels: Record<NonNullable<NonNullable<PortfolioItem['caseStudy']>['status']>, string> = {
+  'pre-launch': 'Pre-Launch',
+  'closed-beta': 'Closed Beta',
+  'live': 'Live',
+  'shipped': 'Shipped',
 }
 
 export function Portfolio() {
@@ -67,10 +72,8 @@ export function Portfolio() {
 
   return (
     <section id="work" className={viewMode === 'gallery' ? '' : 'py-24 md:py-32 bg-background-secondary'}>
-      {/* 3D Gallery View - Full width, no container */}
       {viewMode === 'gallery' && (
         <div className="relative">
-          {/* Floating header overlay */}
           <div className="absolute top-0 left-0 right-0 z-10 pt-6 pb-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
             <Container>
               <div className="text-center pointer-events-auto">
@@ -78,7 +81,7 @@ export function Portfolio() {
                   My <span className="gradient-accent">Portfolio</span>
                 </h2>
                 <p className="text-white/60 text-sm mt-2 max-w-xl mx-auto">
-                  Explore my work in an immersive 3D gallery
+                  Explore the work in an immersive 3D gallery, or switch to grid view.
                 </p>
                 <div className="flex justify-center gap-2 mt-4">
                   <button
@@ -125,7 +128,6 @@ export function Portfolio() {
         </div>
       )}
 
-      {/* Grid View - with Container */}
       {viewMode === 'grid' && (
         <Container>
           <FadeInOnScroll className="text-center mb-12">
@@ -133,10 +135,9 @@ export function Portfolio() {
               My <span className="gradient-accent">Portfolio</span>
             </h2>
             <p className="section-subheading mt-4 mx-auto">
-              Browse through my work across different categories and disciplines.
+              Five SaaS products and a decade of client work. Click any tile for the case study.
             </p>
 
-            {/* View Mode Toggle */}
             <div className="flex justify-center gap-2 mt-6">
               <button
                 onClick={() => setViewMode('gallery')}
@@ -167,7 +168,6 @@ export function Portfolio() {
             </div>
           </FadeInOnScroll>
 
-          {/* Category Filter */}
           <FadeInOnScroll delay={0.1} className="flex flex-wrap justify-center gap-2 mb-12">
             {(['all', ...categories] as const).map((category) => (
               <button
@@ -184,7 +184,6 @@ export function Portfolio() {
             ))}
           </FadeInOnScroll>
 
-          {/* Portfolio Grid */}
           <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item) => (
@@ -207,6 +206,11 @@ export function Portfolio() {
                         className={`w-full h-full ${getImageClasses(item.imageDisplay)} transition-transform duration-500 group-hover:scale-105`}
                         loading="lazy"
                       />
+                      {item.caseStudy?.status && (
+                        <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-accent/90 backdrop-blur-sm text-white text-xs font-medium">
+                          {statusLabels[item.caseStudy.status]}
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                         <span className="text-accent text-xs font-medium uppercase tracking-wider">
@@ -220,6 +224,11 @@ export function Portfolio() {
                         {item.title}
                       </h3>
                       <p className="text-foreground-muted text-sm mt-1">{item.client}</p>
+                      {item.caseStudy && (
+                        <p className="text-accent text-xs mt-2 font-medium">
+                          Read case study →
+                        </p>
+                      )}
                     </div>
                   </button>
                 </motion.div>
@@ -235,19 +244,19 @@ export function Portfolio() {
         </Container>
       )}
 
-      {/* Lightbox */}
+      {/* Lightbox / Case study modal */}
       <AnimatedDialog open={selectedItem !== null} onOpenChange={() => closeLightbox()}>
         {selectedItem && (
           <div className="bg-background-secondary rounded-2xl border border-border overflow-hidden max-h-[90vh] flex flex-col">
             {/* Image */}
-            <div className="relative flex-1 min-h-0">
-              <div className={`relative max-h-[60vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''}`}>
+            <div className="relative flex-shrink-0">
+              <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''}`}>
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={selectedImageIndex}
                     src={selectedItem.images[selectedImageIndex]}
                     alt={selectedItem.title}
-                    className={`w-full ${selectedItem.imageDisplay === 'cover-top' ? 'h-auto' : 'h-full max-h-[60vh] object-contain'}`}
+                    className={`w-full ${selectedItem.imageDisplay === 'cover-top' ? 'h-auto' : 'h-full max-h-[50vh] object-contain'}`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -256,7 +265,6 @@ export function Portfolio() {
                 </AnimatePresence>
               </div>
 
-              {/* Navigation */}
               {selectedItem.images.length > 1 && (
                 <>
                   <button
@@ -276,7 +284,6 @@ export function Portfolio() {
                     </svg>
                   </button>
 
-                  {/* Image counter */}
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
                     {selectedImageIndex + 1} / {selectedItem.images.length}
                   </div>
@@ -284,12 +291,19 @@ export function Portfolio() {
               )}
             </div>
 
-            {/* Info */}
-            <div className="p-6 border-t border-border">
-              <span className="text-accent text-sm font-medium uppercase tracking-wider">
-                {categoryLabels[selectedItem.category]}
-              </span>
-              <h3 className="font-display text-2xl font-bold text-foreground mt-1">
+            {/* Info + case study (scrollable) */}
+            <div className="overflow-y-auto p-6 border-t border-border">
+              <div className="flex items-center gap-3 flex-wrap mb-2">
+                <span className="text-accent text-sm font-medium uppercase tracking-wider">
+                  {categoryLabels[selectedItem.category]}
+                </span>
+                {selectedItem.caseStudy?.status && (
+                  <span className="px-3 py-1 rounded-full text-xs uppercase tracking-wider bg-accent/10 text-accent border border-accent/20">
+                    {statusLabels[selectedItem.caseStudy.status]}
+                  </span>
+                )}
+              </div>
+              <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground">
                 {selectedItem.title}
               </h3>
               <p className="text-foreground-muted mt-2">{selectedItem.description}</p>
@@ -307,6 +321,52 @@ export function Portfolio() {
                       {service}
                     </span>
                   ))}
+                </div>
+              )}
+
+              {/* Case study deep dive */}
+              {selectedItem.caseStudy && (
+                <div className="mt-8 pt-8 border-t border-border space-y-6">
+                  <div>
+                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
+                      Problem
+                    </h4>
+                    <p className="text-foreground-muted leading-relaxed">
+                      {selectedItem.caseStudy.problem}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
+                      Approach
+                    </h4>
+                    <p className="text-foreground-muted leading-relaxed">
+                      {selectedItem.caseStudy.approach}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
+                      Process
+                    </h4>
+                    <ul className="space-y-2">
+                      {selectedItem.caseStudy.process.map((step, i) => (
+                        <li key={i} className="flex gap-3 text-foreground-muted leading-relaxed">
+                          <span className="text-accent flex-shrink-0 mt-1.5">●</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
+                      Outcomes
+                    </h4>
+                    <p className="text-foreground-muted leading-relaxed">
+                      {selectedItem.caseStudy.outcomes}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

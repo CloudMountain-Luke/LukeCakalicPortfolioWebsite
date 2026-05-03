@@ -2,14 +2,22 @@ import { Container } from '../layout/Container'
 import { FadeInOnScroll, StaggeredReveal } from '../shared/ScrollAnimations'
 
 const tools = [
-  'Adobe Photoshop',
-  'Adobe Illustrator',
-  'Adobe InDesign',
-  'Adobe XD',
   'Figma',
-  'After Effects',
-  'Premiere Pro',
-  'Lightroom',
+  'Adobe XD',
+  'Photoshop',
+  'Illustrator',
+  'React',
+  'TypeScript',
+  'Vite',
+  'Tailwind',
+  'Three.js',
+  'Supabase',
+  'Stripe',
+  'Cloudflare',
+  'Replicate',
+  'fal.ai',
+  'Anthropic',
+  'OpenAI',
 ]
 
 export function About() {
@@ -17,14 +25,12 @@ export function About() {
     <section id="about" className="py-24 md:py-32">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Image / Visual */}
+          {/* Visual */}
           <FadeInOnScroll direction="left">
             <div className="relative">
-              {/* Decorative elements */}
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-accent/20 rounded-full blur-2xl" />
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl" />
 
-              {/* Main content area - can be replaced with a photo */}
               <div className="relative aspect-square rounded-2xl border border-border bg-gradient-to-br from-background-secondary to-background-tertiary overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-8">
@@ -35,12 +41,14 @@ export function About() {
                       Luke Cakalic
                     </h3>
                     <p className="text-foreground-muted mt-2">
-                      Designer & Creative Professional
+                      Senior Product Designer + Engineer
+                    </p>
+                    <p className="text-foreground-subtle text-sm mt-1">
+                      Colorado Springs, CO
                     </p>
                   </div>
                 </div>
 
-                {/* Grid pattern overlay */}
                 <div
                   className="absolute inset-0 opacity-[0.03]"
                   style={{
@@ -60,19 +68,47 @@ export function About() {
               </h2>
               <div className="mt-6 space-y-4 text-foreground-muted">
                 <p>
-                  With over 15 years of experience in design, I've had the privilege of working
-                  with businesses of all sizes—from startups to established enterprises—helping
-                  them create visual identities and digital experiences that truly resonate.
+                  I'm Luke. I design SaaS products and ship the code that runs
+                  them. I work the seam between product design and engineering,
+                  where most teams need two people to do what I do alone.
                 </p>
                 <p>
-                  Based in Colorado Springs, I specialize in web design, UI/UX,
-                  and comprehensive brand identity packages. My approach combines creativity with
-                  strategic thinking to deliver designs that not only look great but also achieve
-                  real business results.
+                  Owned <span className="text-foreground">Cloud Mountain Graphics</span>{' '}
+                  for over a decade, working with clients across green tech,
+                  aerospace parts, telecom supply, manufacturing, and home
+                  inspection. Held formal UX/UI Designer roles at{' '}
+                  <span className="text-foreground">Front Range Systems</span>{' '}
+                  and <span className="text-foreground">Nextlink Internet</span>,
+                  designing customer portals and onboarding flows in Agile
+                  teams.
                 </p>
                 <p>
-                  When I'm not designing, you'll find me exploring the Colorado outdoors or
-                  staying up to date with the latest design trends and technologies.
+                  The last two years I've been heads-down building five
+                  AI-native SaaS products inside CMG R&D:{' '}
+                  <span className="text-foreground">Portal747</span> (an AI
+                  build pipeline),{' '}
+                  <span className="text-foreground">Upscale Forge</span> (a
+                  creative suite),{' '}
+                  <span className="text-foreground">GoInspect.ai</span> (a
+                  vertical SaaS for home inspectors heading into closed beta),{' '}
+                  <span className="text-foreground">CubeRift</span> (a 3D web
+                  engine, live on this site), and{' '}
+                  <span className="text-foreground">CutBench</span> (a unified
+                  creative editor). All five are pre-launch, built and
+                  prototyped to launch readiness.
+                </p>
+                <p>
+                  An earlier print and large-format production background is
+                  where I learned production discipline. The habit of
+                  preflight, calibration, and acceptance criteria carries over
+                  to digital. It's the spine of how I run projects today.
+                </p>
+                <p className="text-foreground">
+                  What I'm looking for next: a senior product design or design
+                  engineering role at a company shipping AI-native products,
+                  where production discipline gets put to work on a team that
+                  values it. Remote preferred. On-site or hybrid in the
+                  Colorado Front Range works too.
                 </p>
               </div>
             </FadeInOnScroll>
@@ -80,11 +116,11 @@ export function About() {
             {/* Tools */}
             <FadeInOnScroll direction="right" delay={0.3}>
               <h3 className="font-display text-xl font-semibold text-foreground mt-10 mb-6">
-                Tools & Software
+                Stack & Tools
               </h3>
               <StaggeredReveal
                 className="flex flex-wrap gap-2"
-                staggerDelay={0.05}
+                staggerDelay={0.03}
               >
                 {tools.map((tool) => (
                   <span

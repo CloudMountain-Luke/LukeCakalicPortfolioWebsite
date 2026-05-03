@@ -12,12 +12,9 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Background */}
       <div className="absolute inset-0">
-        {/* Gradient Mesh */}
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background" />
 
-        {/* Animated Orbs */}
         <motion.div
           className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent/10 blur-[100px]"
           animate={{
@@ -45,7 +42,6 @@ export function Hero() {
           }}
         />
 
-        {/* Grid Pattern */}
         <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
@@ -56,8 +52,8 @@ export function Hero() {
       </div>
 
       <Container className="relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Availability badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,7 +61,9 @@ export function Hero() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-glass border border-border mb-8"
           >
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-sm text-foreground-muted">Available for new projects</span>
+            <span className="text-sm text-foreground-muted">
+              Open to senior product roles and select client work
+            </span>
           </motion.div>
 
           {/* Heading */}
@@ -75,11 +73,9 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground"
           >
-            Designing Digital
+            Senior Product
             <br />
-            <span className="gradient-accent">Experiences</span> That
-            <br />
-            Make an Impact
+            <span className="gradient-accent">Designer + Engineer</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -87,10 +83,12 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-6 text-lg md:text-xl text-foreground-muted max-w-2xl mx-auto"
+            className="mt-8 text-lg md:text-xl text-foreground-muted max-w-3xl mx-auto"
           >
-            Web design, UI/UX, and brand identity.
-            Bringing your vision to life with creativity and precision.
+            I design SaaS products and ship the code that runs them.
+            Five AI-native products built and prototyped end to end in the last
+            two years. UX research and brand systems through React, TypeScript,
+            and production deploys.
           </motion.p>
 
           {/* CTAs */}
@@ -101,7 +99,7 @@ export function Hero() {
             className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Button size="lg" onClick={() => scrollToSection('#work')}>
-              View My Work
+              See the Work
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -117,11 +115,43 @@ export function Hero() {
                 <path d="m12 5 7 7-7 7" />
               </svg>
             </Button>
+            <Button variant="secondary" size="lg" onClick={() => scrollToSection('#process')}>
+              How I Work
+            </Button>
             <Button variant="secondary" size="lg" onClick={() => scrollToSection('#contact')}>
               Get in Touch
             </Button>
           </motion.div>
 
+          {/* Stats bar (no year counts) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
+            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
+          >
+            {[
+              { value: '5', label: 'AI-Native SaaS Products' },
+              { value: 'Design', sub: '+ Engineering', label: 'Built end to end' },
+              { value: 'Pre-Launch', label: 'Heading into closed beta' },
+              { value: 'Remote', sub: '/ Colorado', label: 'Available now' },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="text-center px-4 py-4 rounded-xl bg-glass border border-border"
+              >
+                <div className="font-display text-xl md:text-2xl font-bold text-foreground">
+                  {stat.value}
+                  {stat.sub && (
+                    <span className="block text-sm md:text-base font-medium text-foreground-muted mt-0.5">
+                      {stat.sub}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-foreground-subtle mt-2">{stat.label}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </Container>
 

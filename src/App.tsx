@@ -1,5 +1,5 @@
 import { Header, Footer } from './components/layout'
-import { Hero, Services, FeaturedWork, Portfolio, About, Contact } from './components/sections'
+import { Hero, Services, Process, FeaturedWork, Portfolio, About, Contact } from './components/sections'
 
 function App() {
   return (
@@ -8,6 +8,7 @@ function App() {
       <main>
         <Hero />
         <Services />
+        <Process />
         <FeaturedWork />
         <Portfolio />
         <About />
