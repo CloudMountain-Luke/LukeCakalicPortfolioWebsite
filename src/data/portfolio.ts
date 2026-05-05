@@ -8,6 +8,7 @@ import portal747Home from '../assets/images/portfolio/web/portal747-home.png'
 import upscaleforgeHome from '../assets/images/portfolio/web/upscaleforge-home.png'
 import goinspectHome from '../assets/images/portfolio/web/goinspect-home.png'
 import ironbridgeHome from '../assets/images/portfolio/web/ironbridge-home.webp'
+import krisExplainsHome from '../assets/images/portfolio/web/kris-explains-home.jpg'
 
 // Portfolio images - Brand Identity (logos for SaaS / web / digital products)
 import avidLogo from '../assets/images/portfolio/brand/avid-logo-dark.svg'
@@ -20,6 +21,7 @@ import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
 import portal747Logo from '../assets/images/portfolio/brand/portal747-logo-dark.png'
 import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo-transparent.png'
 import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo.png'
+import krisExplainsLogo from '../assets/images/portfolio/brand/kris-explains-logo.jpg'
 
 export const categories = [
   'saas-products',
@@ -199,6 +201,35 @@ export const portfolioItems: PortfolioItem[] = [
     imageDisplay: 'cover-top',
   },
   {
+    id: 'kris-explains-it',
+    title: 'Kris Explains It',
+    client: 'Kris Geiger',
+    category: 'web-design',
+    description:
+      'Web design + brand identity for a science-show streaming brand. Late-night vibes, science-show heart — site, neon mark, and 3D cube view of the show in CubeRift.',
+    images: [krisExplainsHome],
+    featured: true,
+    year: 2025,
+    services: ['Web Design', 'UI/UX', 'Brand System', '3D / CubeRift'],
+    imageDisplay: 'cover',
+    caseStudy: {
+      status: 'pre-launch',
+      problem:
+        'A science-show host needed a streaming-platform-style site that read as broadcast quality, not a generic creator template. The brand had to feel late-night-talk-show: warm neon, brick wall, intimacy, but with science cred.',
+      approach:
+        'Custom site with a neon-sign hero on real brick, and a 3D CubeRift view (cube panels, walkable in WASD or orbit) for visitors who want to explore the show as a space, not a feed.',
+      process: [
+        'Brand mark: hand-built neon-sign logo with cyan atom + red-orange tubes + 4 electrons.',
+        'Hero: 2D image-to-3D pipeline (Meshy 6) producing a real GLB the user can rotate.',
+        'Asset pipeline pinned in vendor/3d-pipeline so the GLB can always be regenerated from committed inputs.',
+        '/3d view: TunnelForge-derived cube hero panel, FPS + orbit controls, ambient effects.',
+        'Astro 5 + React + Cloudflare Pages.',
+      ],
+      outcomes:
+        'Pre-launch. Major lesson: 3D asset pipelines need committed source GLBs + bake scripts in repo, not /tmp working files. Lost a working build to a /tmp wipe; rebuilt the pipeline so any future regeneration is one npm script.',
+    },
+  },
+  {
     id: 'avid-inspection',
     title: 'AVID Inspection Specialists',
     client: 'AVID Inspection Specialists',
@@ -304,6 +335,20 @@ export const portfolioItems: PortfolioItem[] = [
     year: 2024,
     services: ['Logo Design', 'Brand Identity', 'SaaS Branding'],
     imageDisplay: 'contain',
+  },
+  {
+    id: 'kris-explains-brand',
+    title: 'Kris Explains It Logo',
+    client: 'Kris Geiger',
+    category: 'brand-identity',
+    description:
+      'Neon-sign brand mark for a science show. Cyan atom with four electrons, central nucleus, red-orange tube outline ring, and hollow neon-tube letterforms — built to read as both a logo and the actual sign behind the host.',
+    images: [krisExplainsLogo],
+    featured: false,
+    year: 2025,
+    services: ['Logo Design', 'Brand Identity', 'Neon Mark'],
+    imageDisplay: 'contain',
+    imageMaxWidth: '70%',
   },
   {
     id: 'goinspect-brand',
