@@ -24,7 +24,7 @@ const stages = [
     number: '04',
     title: 'Build',
     description:
-      'Production code or production files. Versioned, reviewed, tested, integrated. Same rigor I brought to print preflight, applied to digital.',
+      'Production code, production files. Versioned, reviewed, tested, integrated. Spec-driven with preflight checks before anything ships.',
   },
   {
     number: '05',
@@ -49,16 +49,15 @@ export function Process() {
             How I Work
           </span>
           <h2 className="section-heading mt-4">
-            Production-grade process,
+            Production-grade process
             <br />
-            <span className="gradient-accent">applied to digital products</span>
+            <span className="gradient-accent">for digital products</span>
           </h2>
           <p className="section-subheading mt-6 mx-auto">
-            A print and signage background taught me that one calibration
-            error means a five-thousand-dollar reprint. I built process habits
-            into how work gets done. Every project moves through the same six
-            stages, with clear deliverables and acceptance criteria at each
-            step. Predictable outcomes, not creative gambles.
+            Predictable outcomes, not creative gambles. Every project moves
+            through the same six stages, with clear deliverables and
+            acceptance criteria at each checkpoint. You know what you're
+            getting before it ships — and so do I.
           </p>
         </FadeInOnScroll>
 

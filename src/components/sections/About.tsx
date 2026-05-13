@@ -93,10 +93,9 @@ export function About() {
                   rolling out as their respective branding lands.
                 </p>
                 <p>
-                  An earlier print and large-format production background is
-                  where I learned production discipline. The habit of
-                  preflight, calibration, and acceptance criteria carries over
-                  to digital. It is the spine of how I run projects today.
+                  An earlier career in production work taught me that
+                  acceptance criteria and preflight checks are what separate
+                  "the project shipped" from "the project shipped twice."
                 </p>
                 <p className="text-foreground">
                   What I am looking for next: a senior product design or

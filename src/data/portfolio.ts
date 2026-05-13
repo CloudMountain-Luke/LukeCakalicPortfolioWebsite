@@ -95,7 +95,7 @@ export const portfolioItems: PortfolioItem[] = [
         'Cross-provider routing for image and video generation across Replicate and fal.ai.',
       ],
       outcomes:
-        'Working pipeline, pre-launch. Biggest design challenge was brand-mood drift: agents would hallucinate aesthetic mid-build. Fix was a beat-keyed subject catalog with cinematography pinned separately from subject vocabulary. Major lesson: AI agent systems need the same production discipline as print preflight, or they spend money producing the wrong thing.',
+        'Working pipeline, pre-launch. Biggest design challenge was brand-mood drift: agents would hallucinate aesthetic mid-build. Fix was a beat-keyed subject catalog with cinematography pinned separately from subject vocabulary. Major lesson: AI agent systems need acceptance criteria and preflight checks like any production system, or they spend money producing the wrong thing.',
     },
   },
   {
