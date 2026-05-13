@@ -9,6 +9,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      /* Pre-hydration theme resolver. Runs BEFORE React mounts so the
+         <html data-theme> attribute is set before the first paint —
+         prevents a flash of dark on a light-mode system (or vice versa).
+         Mirrors the logic in src/hooks/useTheme.ts (any change there must
+         be mirrored here). */
+      (function () {
+        try {
+          var stored = window.localStorage.getItem('lcw:theme');
+          var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+          var theme = (stored === 'light' || stored === 'dark') ? stored : (prefersLight ? 'light' : 'dark');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

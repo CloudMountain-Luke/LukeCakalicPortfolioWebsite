@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Container } from './Container'
 import { Button } from '../ui/Button'
+import { ThemeToggle } from '../ui/ThemeToggle'
 import { cn } from '../../lib/utils'
 
 const navLinks = [
@@ -56,7 +57,7 @@ export function Header() {
             </a>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (
                 <button
                   key={link.href}
@@ -66,6 +67,7 @@ export function Header() {
                   {link.label}
                 </button>
               ))}
+              <ThemeToggle />
               <Button
                 size="sm"
                 onClick={() => scrollToSection('#contact')}
@@ -74,12 +76,14 @@ export function Header() {
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2 text-foreground"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
+            {/* Mobile theme toggle + menu button */}
+            <div className="md:hidden flex items-center gap-1">
+              <ThemeToggle />
+              <button
+                className="p-2 text-foreground"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -104,7 +108,8 @@ export function Header() {
                   </>
                 )}
               </svg>
-            </button>
+              </button>
+            </div>
           </nav>
         </Container>
       </header>

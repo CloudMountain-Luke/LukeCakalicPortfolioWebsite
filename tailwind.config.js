@@ -7,29 +7,33 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Dark theme palette
+        // Theme-aware palette — values resolve from CSS variables defined in
+        // src/index.css (:root for dark, [data-theme="light"] for light).
+        // Solids use rgb(var(--X) / <alpha-value>) so bg-foreground/50 etc.
+        // still work; border/glass keep raw rgba vars since their alpha
+        // varies between modes.
         background: {
-          DEFAULT: '#0a0a0f',
-          secondary: '#111118',
-          tertiary: '#1a1a24',
+          DEFAULT:   'rgb(var(--bg) / <alpha-value>)',
+          secondary: 'rgb(var(--bg-secondary) / <alpha-value>)',
+          tertiary:  'rgb(var(--bg-tertiary) / <alpha-value>)',
         },
         foreground: {
-          DEFAULT: '#f5f5f7',
-          muted: '#a1a1aa',
-          subtle: '#71717a',
+          DEFAULT: 'rgb(var(--fg) / <alpha-value>)',
+          muted:   'rgb(var(--fg-muted) / <alpha-value>)',
+          subtle:  'rgb(var(--fg-subtle) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#6366f1',
-          hover: '#818cf8',
-          muted: '#4f46e5',
+          DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+          hover:   'rgb(var(--accent-hover) / <alpha-value>)',
+          muted:   'rgb(var(--accent-muted) / <alpha-value>)',
         },
         border: {
-          DEFAULT: 'rgba(255, 255, 255, 0.08)',
-          hover: 'rgba(255, 255, 255, 0.15)',
+          DEFAULT: 'var(--border)',
+          hover:   'var(--border-hover)',
         },
         glass: {
-          DEFAULT: 'rgba(255, 255, 255, 0.03)',
-          hover: 'rgba(255, 255, 255, 0.06)',
+          DEFAULT: 'var(--glass)',
+          hover:   'var(--glass-hover)',
         },
       },
       fontFamily: {

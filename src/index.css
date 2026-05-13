@@ -2,6 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme tokens — light and dark live here as the single source of truth.
+   Tailwind colors reference these via rgb(var(--X) / <alpha-value>) so
+   utility classes like bg-background-secondary, text-foreground-muted etc.
+   stay theme-aware with zero per-component changes. Dark is the default
+   (page loads as dark unless the user's system says light or they pick
+   light manually — see useTheme.ts + the pre-hydration script in index.html). */
+:root,
+:root[data-theme="dark"] {
+  /* 2D — dark palette (unchanged from prior fixed-hex Tailwind config) */
+  --bg:           10 10 15;       /* #0a0a0f */
+  --bg-secondary: 17 17 24;       /* #111118 */
+  --bg-tertiary:  26 26 36;       /* #1a1a24 */
+
+  --fg:        245 245 247;       /* #f5f5f7 */
+  --fg-muted:  161 161 170;       /* #a1a1aa */
+  --fg-subtle: 113 113 122;       /* #71717a */
+
+  --accent:       99 102 241;     /* #6366f1 */
+  --accent-hover: 129 140 248;    /* #818cf8 */
+  --accent-muted: 79 70 229;      /* #4f46e5 */
+
+  --border:       rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+  --glass:        rgba(255, 255, 255, 0.03);
+  --glass-hover:  rgba(255, 255, 255, 0.06);
+
+  /* Gradient anchors used by .gradient-text and .gradient-accent — let
+     each mode tune the gradient's endpoints to match the surface. */
+  --gradient-text-from:    255 255 255;  /* white */
+  --gradient-accent-stop:  168 85 247;   /* purple-500 */
+
+  /* 3D Gallery — dark scene */
+  --gallery-bg:        10 10 21;          /* #0a0a15 */
+  --gallery-fog-near:  15;
+  --gallery-fog-far:   80;
+  --gallery-wall:      37 37 64;          /* #252540 */
+  --gallery-floor:     30 30 50;          /* #1e1e32 */
+  --gallery-ceiling:   26 26 46;          /* #1a1a2e */
+  --gallery-frame:     15 15 26;          /* #0f0f1a */
+  --gallery-frame-metalness: 0.3;
+  --gallery-ambient-intensity: 0.4;
+  --gallery-hemi-sky:  177 200 255;       /* #b1c8ff */
+  --gallery-hemi-gnd:  26 26 46;          /* #1a1a2e */
+  --gallery-hemi-intensity: 0.3;
+  --gallery-frame-light: 99 102 241;      /* #6366f1 */
+  --gallery-frame-emissive-intensity: 1.2;
+  --gallery-placard:   15 15 26;          /* #0f0f1a */
+  --gallery-title:     212 212 224;       /* #d4d4e0 */
+  --gallery-subtitle:  144 144 168;       /* #9090a8 */
+}
+
+:root[data-theme="light"] {
+  /* 2D — lavender-white "Foundation / cold-sunrise sci-fi" palette */
+  --bg:           244 241 248;    /* #f4f1f8 */
+  --bg-secondary: 236 231 242;    /* #ece7f2 */
+  --bg-tertiary:  223 216 232;    /* #dfd8e8 */
+
+  --fg:        26 20 36;          /* #1a1424 */
+  --fg-muted:  74 68 88;          /* #4a4458 */
+  --fg-subtle: 117 112 138;       /* #75708a */
+
+  --accent:       80 70 229;      /* #5046e5 — deeper for AA contrast on light bg */
+  --accent-hover: 99 102 241;     /* #6366f1 */
+  --accent-muted: 123 115 238;    /* #7b73ee */
+
+  --border:       rgba(60, 40, 130, 0.12);
+  --border-hover: rgba(60, 40, 130, 0.22);
+  --glass:        rgba(255, 255, 255, 0.55);
+  --glass-hover:  rgba(255, 255, 255, 0.75);
+
+  /* Gradient endpoints retuned: dark-mode's white-from-fg gradient reads
+     as a muddy fade on light bg; pin from = fg instead so it stays
+     readable, and shift the accent gradient stop slightly cooler. */
+  --gradient-text-from:    26 20 36;     /* #1a1424 — same as --fg */
+  --gradient-accent-stop:  124 58 237;   /* purple-600 — slightly deeper than 500 */
+
+  /* 3D Gallery — light sci-fi scene */
+  --gallery-bg:        244 241 248;       /* #f4f1f8 */
+  --gallery-fog-near:  18;
+  --gallery-fog-far:   55;                /* tighter than dark — light fog needs faster fall-off */
+  --gallery-wall:      228 222 238;       /* #e4deee */
+  --gallery-floor:     200 192 216;       /* #c8c0d8 — polished grey-violet */
+  --gallery-ceiling:   244 241 248;       /* #f4f1f8 — skylit corridor */
+  --gallery-frame:     42 33 56;          /* #2a2138 — deep gunmetal */
+  --gallery-frame-metalness: 0.5;         /* bumped — polished aluminum read */
+  --gallery-ambient-intensity: 0.65;
+  --gallery-hemi-sky:  255 255 255;
+  --gallery-hemi-gnd:  200 192 216;       /* #c8c0d8 — bounce matches floor */
+  --gallery-hemi-intensity: 0.45;
+  --gallery-frame-light: 6 182 212;       /* #06b6d4 — cyan; violet muddies on light bg */
+  --gallery-frame-emissive-intensity: 0.8;
+  --gallery-placard:   255 255 255;       /* light placard with dark text */
+  --gallery-title:     42 33 56;          /* #2a2138 */
+  --gallery-subtitle:  90 80 112;         /* #5a5070 */
+}
+
+/* Tell the browser which native color-scheme to use for scrollbars,
+   form controls, etc., so they don't render as dark in light mode. */
+html { color-scheme: dark; }
+html[data-theme="light"] { color-scheme: light; }
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -17,7 +118,7 @@
   }
 
   ::selection {
-    @apply bg-accent/30 text-white;
+    @apply bg-accent/30 text-foreground;
   }
 }
 
@@ -30,12 +131,25 @@
     @apply glass-panel hover:bg-glass-hover hover:border-border-hover transition-all duration-300;
   }
 
+  /* Gradient text uses theme-aware endpoints — dark mode renders white →
+     fg → fg-muted; light mode pins from = fg (white-on-light is invisible). */
   .gradient-text {
-    @apply bg-gradient-to-r from-white via-foreground to-foreground-muted bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      to right,
+      rgb(var(--gradient-text-from)),
+      rgb(var(--fg)),
+      rgb(var(--fg-muted))
+    );
+    @apply bg-clip-text text-transparent;
   }
 
   .gradient-accent {
-    @apply bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      to right,
+      rgb(var(--accent)),
+      rgb(var(--gradient-accent-stop))
+    );
+    @apply bg-clip-text text-transparent;
   }
 
   .section-heading {

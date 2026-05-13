@@ -4,6 +4,7 @@ import { Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { portfolioItems, type PortfolioItem } from '../../data/portfolio'
 import { MobileControls } from '../ui/MobileControls'
+import { useTheme } from '../../hooks/useTheme'
 
 // ---- Constants ----
 const HALLWAY_WIDTH = 8
@@ -12,14 +13,126 @@ const FRAME_SPACING = 6
 const FRAME_WIDTH = 3.5
 const FRAME_HEIGHT = 2.5
 const FRAME_Y = 1.8
-const WALL_COLOR = '#252540'
-const FLOOR_COLOR = '#1e1e32'
-const CEILING_COLOR = '#1a1a2e'
-// Near-black so the frame reads as a clean black border, not as a purple outline
-const FRAME_BORDER_COLOR = '#0f0f1a'
 const MOVE_SPEED = 5
 const MOUSE_SENSITIVITY = 0.002
 const TOUCH_SENSITIVITY = 0.004
+
+// ---- Theme-aware gallery palettes ----
+// Two complete environments. Dark is the original cyberpunk-violet hallway.
+// Light is the "Foundation cold sunrise" / Apple-store-meets-sci-fi
+// counterpart — ivory walls, polished grey-violet floor, deep gunmetal
+// frames, cyan point-light accents that read sci-fi without violet muddying
+// on the light bg. Toggling between them at runtime swaps materials, lights,
+// scene bg, fog, and the procedural canvas textures.
+interface GalleryPalette {
+  sceneBg: string
+  fogNear: number
+  fogFar: number
+  wall: string
+  floor: string
+  ceiling: string
+  frameBorder: string
+  frameMetalness: number
+  ambientIntensity: number
+  hemiSky: string
+  hemiGround: string
+  hemiIntensity: number
+  frameLight: string
+  frameEmissiveIntensity: number
+  placard: string
+  title: string
+  subtitle: string
+  ceilingStrip: string
+  ceilingStripIntensity: number
+  ceilingPointColor: string
+  ceilingPointIntensity: number
+  floorAccentColor: string
+  endWall: string
+  // Procedural-texture colors. Kept as RGB tuples so the canvas helpers
+  // can blend them into the speckle/gradient passes without re-parsing.
+  textureHighlightR: number
+  textureHighlightG: number
+  textureHighlightB: number
+  textureLine: string
+  textureGradientTop: string
+  textureGradientBottom: string
+}
+
+const DARK_GALLERY_PALETTE: GalleryPalette = {
+  sceneBg: '#0a0a15',
+  fogNear: 15,
+  fogFar: 80,
+  wall: '#252540',
+  floor: '#1e1e32',
+  ceiling: '#1a1a2e',
+  frameBorder: '#0f0f1a',
+  frameMetalness: 0.3,
+  ambientIntensity: 0.4,
+  hemiSky: '#b1c8ff',
+  hemiGround: '#1a1a2e',
+  hemiIntensity: 0.3,
+  frameLight: '#6366f1',
+  frameEmissiveIntensity: 1.2,
+  placard: '#0f0f1a',
+  title: '#d4d4e0',
+  subtitle: '#9090a8',
+  ceilingStrip: '#ffffff',
+  ceilingStripIntensity: 1.2,
+  ceilingPointColor: '#e8e8ff',
+  ceilingPointIntensity: 2.0,
+  floorAccentColor: '#6366f1',
+  endWall: '#151528',
+  textureHighlightR: 100,
+  textureHighlightG: 100,
+  textureHighlightB: 140,
+  textureLine: 'rgba(100, 100, 140, 0.25)',
+  textureGradientTop: 'rgba(100, 100, 160, 0.08)',
+  textureGradientBottom: 'rgba(0, 0, 20, 0.15)',
+}
+
+const LIGHT_GALLERY_PALETTE: GalleryPalette = {
+  sceneBg: '#f4f1f8',
+  fogNear: 18,
+  fogFar: 55,
+  wall: '#e4deee',
+  floor: '#c8c0d8',
+  ceiling: '#f4f1f8',
+  frameBorder: '#2a2138',
+  frameMetalness: 0.5,
+  ambientIntensity: 0.65,
+  hemiSky: '#ffffff',
+  hemiGround: '#c8c0d8',
+  hemiIntensity: 0.45,
+  frameLight: '#06b6d4',
+  frameEmissiveIntensity: 0.8,
+  placard: '#ffffff',
+  title: '#2a2138',
+  subtitle: '#5a5070',
+  // Ceiling strips in light mode: warm white still glows (LED-bar feel),
+  // but the brightness is dialed back since the bg is no longer absorbing
+  // light. Same for the point lights.
+  ceilingStrip: '#ffffff',
+  ceilingStripIntensity: 0.7,
+  ceilingPointColor: '#f0f4ff',
+  ceilingPointIntensity: 1.0,
+  // Floor accents: cyan instead of violet, faint — adds the sci-fi tell
+  // without competing with the cyan-shifted frame lights.
+  floorAccentColor: '#06b6d4',
+  endWall: '#dfd8e8',
+  // Texture speckle: muted violet on ivory (subtle, just enough to break
+  // up flat planes); line/gradient values shifted to read on light bg.
+  textureHighlightR: 90,
+  textureHighlightG: 80,
+  textureHighlightB: 130,
+  textureLine: 'rgba(90, 80, 130, 0.15)',
+  textureGradientTop: 'rgba(255, 255, 255, 0.18)',
+  textureGradientBottom: 'rgba(120, 100, 160, 0.12)',
+}
+
+function useGalleryPalette(): GalleryPalette {
+  const { theme } = useTheme()
+  return theme === 'light' ? LIGHT_GALLERY_PALETTE : DARK_GALLERY_PALETTE
+}
 
 // Shared mutable state for per-frame crosshair targeting (avoids React re-renders)
 const fpsState = {
@@ -38,6 +151,7 @@ function PortraitFrame({
 }) {
   const meshRef = useRef<THREE.Mesh>(null)
   const texture = useLoader(THREE.TextureLoader, item.images[0])
+  const palette = useGalleryPalette()
 
   useMemo(() => {
     if (texture) {
@@ -70,7 +184,7 @@ function PortraitFrame({
       {/* Frame border */}
       <mesh position={[0, 0, -0.05]}>
         <boxGeometry args={[frameW + 0.3, frameH + 0.3, 0.08]} />
-        <meshStandardMaterial color={FRAME_BORDER_COLOR} metalness={0.3} roughness={0.7} />
+        <meshStandardMaterial color={palette.frameBorder} metalness={palette.frameMetalness} roughness={0.7} />
       </mesh>
 
       {/* Artwork - tagged with userData for raycasting */}
@@ -88,13 +202,13 @@ function PortraitFrame({
       {/* Label placard background */}
       <mesh position={[0, -(frameH / 2) - 0.4, -0.01]}>
         <planeGeometry args={[Math.min(frameW + 0.2, 3.0), 0.32]} />
-        <meshBasicMaterial color="#0f0f1a" transparent opacity={0.85} />
+        <meshBasicMaterial color={palette.placard} transparent opacity={0.85} />
       </mesh>
       {/* Title - single line, small */}
       <Text
         position={[0, -(frameH / 2) - 0.3, 0.01]}
         fontSize={0.09}
-        color="#d4d4e0"
+        color={palette.title}
         anchorX="center"
         anchorY="top"
         maxWidth={Math.min(frameW, 2.8)}
@@ -107,7 +221,7 @@ function PortraitFrame({
       <Text
         position={[0, -(frameH / 2) - 0.46, 0.01]}
         fontSize={0.065}
-        color="#9090a8"
+        color={palette.subtitle}
         anchorX="center"
         anchorY="top"
         maxWidth={Math.min(frameW, 2.8)}
@@ -116,32 +230,38 @@ function PortraitFrame({
         {item.client}
       </Text>
 
-      {/* Per-artwork gallery spotlight */}
-      <pointLight position={[0, 0.8, 1.5]} intensity={2.0} distance={5} color="#f0f0ff" />
+      {/* Per-artwork gallery spotlight. Tinted by the frame-light color so
+          dark mode reads violet-cool and light mode reads cyan-cool. */}
+      <pointLight position={[0, 0.8, 1.5]} intensity={2.0} distance={5} color={palette.frameLight} />
       <pointLight position={[0, -1.5, 0.5]} intensity={0.5} distance={3} color="#ffffff" />
     </group>
   )
 }
 
 // ---- Procedural Texture Generators ----
-function createFloorTexture(length: number): THREE.CanvasTexture {
+// All three now take a `palette` arg so they re-render against the active
+// theme. The speckle/gradient/line passes still produce the same general
+// detail look — only their hue + lightness shift between modes. Callers
+// must dispose the returned texture when switching themes (see Hallway's
+// useMemo + useEffect cleanup) to avoid GPU leaks.
+function createFloorTexture(length: number, palette: GalleryPalette): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')
   canvas.width = 512
   canvas.height = 512
   const ctx = canvas.getContext('2d')!
 
-  ctx.fillStyle = FLOOR_COLOR
+  ctx.fillStyle = palette.floor
   ctx.fillRect(0, 0, 512, 512)
 
   for (let i = 0; i < 3000; i++) {
     const x = Math.random() * 512
     const y = Math.random() * 512
     const brightness = Math.random() * 15 + 20
-    ctx.fillStyle = `rgba(${brightness + 80}, ${brightness + 80}, ${brightness + 120}, 0.15)`
+    ctx.fillStyle = `rgba(${brightness + palette.textureHighlightR}, ${brightness + palette.textureHighlightG}, ${brightness + palette.textureHighlightB}, 0.15)`
     ctx.fillRect(x, y, 2, 2)
   }
 
-  ctx.strokeStyle = 'rgba(100, 100, 140, 0.25)'
+  ctx.strokeStyle = palette.textureLine
   ctx.lineWidth = 2
   for (let i = 0; i <= 512; i += 128) {
     ctx.beginPath()
@@ -154,7 +274,7 @@ function createFloorTexture(length: number): THREE.CanvasTexture {
     ctx.stroke()
   }
 
-  ctx.strokeStyle = 'rgba(80, 80, 120, 0.1)'
+  ctx.strokeStyle = palette.textureLine
   ctx.lineWidth = 1
   for (let i = 0; i <= 512; i += 64) {
     ctx.beginPath()
@@ -173,18 +293,18 @@ function createFloorTexture(length: number): THREE.CanvasTexture {
   return tex
 }
 
-function createWallTexture(length: number): THREE.CanvasTexture {
+function createWallTexture(length: number, palette: GalleryPalette): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')
   canvas.width = 512
   canvas.height = 256
   const ctx = canvas.getContext('2d')!
 
-  ctx.fillStyle = WALL_COLOR
+  ctx.fillStyle = palette.wall
   ctx.fillRect(0, 0, 512, 256)
 
   const grad = ctx.createLinearGradient(0, 0, 0, 256)
-  grad.addColorStop(0, 'rgba(100, 100, 160, 0.08)')
-  grad.addColorStop(1, 'rgba(0, 0, 20, 0.15)')
+  grad.addColorStop(0, palette.textureGradientTop)
+  grad.addColorStop(1, palette.textureGradientBottom)
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, 512, 256)
 
@@ -192,18 +312,18 @@ function createWallTexture(length: number): THREE.CanvasTexture {
     const x = Math.random() * 512
     const y = Math.random() * 256
     const brightness = Math.random() * 20 + 30
-    ctx.fillStyle = `rgba(${brightness + 60}, ${brightness + 60}, ${brightness + 100}, 0.08)`
+    ctx.fillStyle = `rgba(${brightness + palette.textureHighlightR - 40}, ${brightness + palette.textureHighlightG - 40}, ${brightness + palette.textureHighlightB - 40}, 0.08)`
     ctx.fillRect(x, y, 1, 1)
   }
 
-  ctx.strokeStyle = 'rgba(60, 60, 100, 0.2)'
+  ctx.strokeStyle = palette.textureLine
   ctx.lineWidth = 1
   ctx.beginPath()
   ctx.moveTo(0, 200)
   ctx.lineTo(512, 200)
   ctx.stroke()
 
-  ctx.strokeStyle = 'rgba(80, 80, 130, 0.12)'
+  ctx.strokeStyle = palette.textureLine
   for (let i = 0; i <= 512; i += 128) {
     ctx.beginPath()
     ctx.moveTo(i, 0)
@@ -217,16 +337,16 @@ function createWallTexture(length: number): THREE.CanvasTexture {
   return tex
 }
 
-function createCeilingTexture(length: number): THREE.CanvasTexture {
+function createCeilingTexture(length: number, palette: GalleryPalette): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')
   canvas.width = 256
   canvas.height = 256
   const ctx = canvas.getContext('2d')!
 
-  ctx.fillStyle = CEILING_COLOR
+  ctx.fillStyle = palette.ceiling
   ctx.fillRect(0, 0, 256, 256)
 
-  ctx.strokeStyle = 'rgba(50, 50, 80, 0.3)'
+  ctx.strokeStyle = palette.textureLine
   ctx.lineWidth = 2
   for (let i = 0; i <= 256; i += 64) {
     ctx.beginPath()
@@ -239,7 +359,7 @@ function createCeilingTexture(length: number): THREE.CanvasTexture {
     ctx.stroke()
   }
 
-  ctx.fillStyle = 'rgba(20, 20, 40, 0.2)'
+  ctx.fillStyle = palette.textureGradientBottom
   for (let x = 8; x < 256; x += 16) {
     for (let y = 8; y < 256; y += 16) {
       if ((x + y) % 32 === 8) {
@@ -258,9 +378,20 @@ function createCeilingTexture(length: number): THREE.CanvasTexture {
 
 // ---- Hallway Structure ----
 function Hallway({ length }: { length: number }) {
-  const floorTexture = useMemo(() => createFloorTexture(length), [length])
-  const wallTexture = useMemo(() => createWallTexture(length), [length])
-  const ceilingTexture = useMemo(() => createCeilingTexture(length), [length])
+  const palette = useGalleryPalette()
+  // Textures regenerate when length OR theme changes; we dispose the prior
+  // texture instances on cleanup so the GPU doesn't accumulate them every
+  // time the user toggles modes.
+  const floorTexture = useMemo(() => createFloorTexture(length, palette), [length, palette])
+  const wallTexture = useMemo(() => createWallTexture(length, palette), [length, palette])
+  const ceilingTexture = useMemo(() => createCeilingTexture(length, palette), [length, palette])
+  useEffect(() => {
+    return () => {
+      floorTexture.dispose()
+      wallTexture.dispose()
+      ceilingTexture.dispose()
+    }
+  }, [floorTexture, wallTexture, ceilingTexture])
 
   return (
     <group>
@@ -286,38 +417,38 @@ function Hallway({ length }: { length: number }) {
 
       <mesh position={[0, HALLWAY_HEIGHT / 2 - 0.25, -length]}>
         <planeGeometry args={[HALLWAY_WIDTH, HALLWAY_HEIGHT + 0.5]} />
-        <meshStandardMaterial color={WALL_COLOR} roughness={0.7} />
+        <meshStandardMaterial color={palette.wall} roughness={0.7} />
       </mesh>
 
       {Array.from({ length: Math.ceil(length / 8) }).map((_, i) => (
         <group key={i}>
           <mesh position={[-1.5, HALLWAY_HEIGHT - 0.05, -(i * 8 + 4)]}>
             <boxGeometry args={[0.15, 0.05, 6]} />
-            <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.2} />
+            <meshStandardMaterial color={palette.ceilingStrip} emissive={palette.ceilingStrip} emissiveIntensity={palette.ceilingStripIntensity} />
           </mesh>
           <mesh position={[1.5, HALLWAY_HEIGHT - 0.05, -(i * 8 + 4)]}>
             <boxGeometry args={[0.15, 0.05, 6]} />
-            <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.2} />
+            <meshStandardMaterial color={palette.ceilingStrip} emissive={palette.ceilingStrip} emissiveIntensity={palette.ceilingStripIntensity} />
           </mesh>
           <pointLight
             position={[0, HALLWAY_HEIGHT - 0.3, -(i * 8 + 4)]}
-            intensity={2.0}
+            intensity={palette.ceilingPointIntensity}
             distance={14}
-            color="#e8e8ff"
+            color={palette.ceilingPointColor}
           />
         </group>
       ))}
 
       {Array.from({ length: Math.ceil(length / 12) }).map((_, i) => (
         <group key={`floor-light-${i}`}>
-          <pointLight position={[-HALLWAY_WIDTH / 2 + 0.3, 0, -(i * 12 + 6)]} intensity={0.3} distance={4} color="#6366f1" />
-          <pointLight position={[HALLWAY_WIDTH / 2 - 0.3, 0, -(i * 12 + 6)]} intensity={0.3} distance={4} color="#6366f1" />
+          <pointLight position={[-HALLWAY_WIDTH / 2 + 0.3, 0, -(i * 12 + 6)]} intensity={0.3} distance={4} color={palette.floorAccentColor} />
+          <pointLight position={[HALLWAY_WIDTH / 2 - 0.3, 0, -(i * 12 + 6)]} intensity={0.3} distance={4} color={palette.floorAccentColor} />
         </group>
       ))}
 
       <mesh position={[0, HALLWAY_HEIGHT / 2, -length + 0.1]}>
         <planeGeometry args={[HALLWAY_WIDTH, HALLWAY_HEIGHT]} />
-        <meshBasicMaterial color="#151528" transparent opacity={0.9} />
+        <meshBasicMaterial color={palette.endWall} transparent opacity={0.9} />
       </mesh>
     </group>
   )
@@ -612,6 +743,7 @@ export function Gallery3D({ onSelectItem }: { onSelectItem: (item: PortfolioItem
   const touchExitSignal = useRef(false)
   const [isLocked, setIsLocked] = useState(false)
   const [aimedItem, setAimedItem] = useState<PortfolioItem | null>(null)
+  const palette = useGalleryPalette()
 
   // Filter to featured items only. Logos for the same brand show up twice
   // across categories (e.g. Portal747 in SaaS Products + brand-identity), so
@@ -644,11 +776,11 @@ export function Gallery3D({ onSelectItem }: { onSelectItem: (item: PortfolioItem
         gl={{ antialias: true, alpha: false }}
         dpr={[1, 1.5]}
       >
-        <color attach="background" args={['#0a0a15']} />
-        <fog attach="fog" args={['#0a0a15', 15, 80]} />
+        <color attach="background" args={[palette.sceneBg]} />
+        <fog attach="fog" args={[palette.sceneBg, palette.fogNear, palette.fogFar]} />
 
-        <ambientLight intensity={0.4} />
-        <hemisphereLight args={['#b1c8ff', '#1a1a2e', 0.3]} />
+        <ambientLight intensity={palette.ambientIntensity} />
+        <hemisphereLight args={[palette.hemiSky, palette.hemiGround, palette.hemiIntensity]} />
 
         <Suspense fallback={null}>
           <Hallway length={totalLength} />
