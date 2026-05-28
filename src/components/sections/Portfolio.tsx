@@ -1,11 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-// AnimatePresence is still used inside the lightbox image transition.
-// motion.div is still used inside the lightbox; the grid no longer uses
-// either, which improves scroll perf.
+import { Link, useNavigate } from 'react-router-dom'
 import { Container } from '../layout/Container'
 import { FadeInOnScroll } from '../shared/ScrollAnimations'
-import { AnimatedDialog } from '../ui/Dialog'
 import { portfolioItems, categories, type PortfolioItem, type Category, type ImageDisplay } from '../../data/portfolio'
 
 const Gallery3D = lazy(() => import('./Gallery3D').then(m => ({ default: m.Gallery3D })))
@@ -174,9 +170,8 @@ export function Portfolio() {
   // Esc key, or scroll out of view via IntersectionObserver below).
   const [galleryActivated, setGalleryActivated] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all')
-  const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null)
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const sectionRef = useRef<HTMLElement>(null)
+  const navigate = useNavigate()
 
   // Featured items to render as "frames on the wall" in the poster. Mirrors
   // Gallery3D's own filter (featured-only) so the preview matches what the
@@ -228,29 +223,6 @@ export function Portfolio() {
     if (selectedCategory === 'all') return portfolioItems
     return portfolioItems.filter((item) => item.category === selectedCategory)
   }, [selectedCategory])
-
-  const openLightbox = (item: PortfolioItem, imageIndex: number = 0) => {
-    setSelectedItem(item)
-    setSelectedImageIndex(imageIndex)
-  }
-
-  const closeLightbox = () => {
-    setSelectedItem(null)
-    setSelectedImageIndex(0)
-  }
-
-  const navigateImage = (direction: 'prev' | 'next') => {
-    if (!selectedItem) return
-    const newIndex =
-      direction === 'prev'
-        ? selectedImageIndex === 0
-          ? selectedItem.images.length - 1
-          : selectedImageIndex - 1
-        : selectedImageIndex === selectedItem.images.length - 1
-        ? 0
-        : selectedImageIndex + 1
-    setSelectedImageIndex(newIndex)
-  }
 
   return (
     <section
@@ -311,7 +283,14 @@ export function Portfolio() {
                   </div>
                 </div>
               }>
-                <Gallery3D onSelectItem={(item) => openLightbox(item)} />
+                {/*
+                  Clicking a frame in 3D used to open the modal. Now it
+                  navigates to the dedicated case-study page. Gallery3D
+                  already releases pointer-lock inside its onClick handler
+                  before firing onSelectItem (Gallery3D.tsx ~line 529), so
+                  the navigation happens with the cursor unlocked.
+                */}
+                <Gallery3D onSelectItem={(item) => navigate(`/work/${item.id}`)} />
               </Suspense>
               <button
                 onClick={() => setGalleryActivated(false)}
@@ -388,16 +367,17 @@ export function Portfolio() {
 
           {/*
            * Plain grid: no `layout` prop, no AnimatePresence. Filter
-           * changes mount/unmount items without FLIP animations. This
-           * removes the per-tile layout watchers that were running during
-           * scroll and contributing to the slow / jumpy feel.
+           * changes mount/unmount items without FLIP animations. Tiles
+           * are now real <Link>s — they render as <a href="/work/...">
+           * which the prerender plugin's link-discovery walks at build
+           * time to enumerate routes to snapshot.
            */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map((item) => (
                 <div key={item.id} className="animate-fade-in-up">
-                  <button
-                    onClick={() => openLightbox(item)}
-                    className="group w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
+                  <Link
+                    to={`/work/${item.id}`}
+                    className="group block w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
                   >
                     <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item)} ${item.imageMaxWidth ? 'flex items-center justify-center' : ''}`}>
                       <img
@@ -429,13 +409,11 @@ export function Portfolio() {
                         {item.title}
                       </h3>
                       <p className="text-foreground-muted text-sm mt-1">{item.client}</p>
-                      {item.caseStudy && (
-                        <p className="text-accent text-xs mt-2 font-medium">
-                          Read case study →
-                        </p>
-                      )}
+                      <p className="text-accent text-xs mt-2 font-medium">
+                        {item.caseStudy ? 'Read case study →' : 'View project →'}
+                      </p>
                     </div>
-                  </button>
+                  </Link>
                 </div>
               ))}
           </div>
@@ -447,138 +425,6 @@ export function Portfolio() {
           )}
         </Container>
       )}
-
-      {/* Lightbox / Case study modal */}
-      <AnimatedDialog open={selectedItem !== null} onOpenChange={() => closeLightbox()}>
-        {selectedItem && (
-          <div className="bg-background-secondary rounded-2xl border border-border overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="relative flex-shrink-0">
-              <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''} ${selectedItem.lightCardBg ? 'bg-white' : ''} ${selectedItem.imageMaxWidth ? 'flex items-center justify-center py-8 bg-background-tertiary' : ''}`}>
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={selectedImageIndex}
-                    src={selectedItem.images[selectedImageIndex]}
-                    alt={selectedItem.title}
-                    className={
-                      selectedItem.imageMaxWidth
-                        ? 'h-auto object-contain'
-                        : `w-full ${selectedItem.imageDisplay === 'cover-top' ? 'h-auto' : 'h-full max-h-[50vh] object-contain'}`
-                    }
-                    style={selectedItem.imageMaxWidth ? { maxWidth: selectedItem.imageMaxWidth } : undefined}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  />
-                </AnimatePresence>
-              </div>
-
-              {selectedItem.images.length > 1 && (
-                <>
-                  <button
-                    onClick={() => navigateImage('prev')}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m15 18-6-6 6-6"/>
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => navigateImage('next')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </button>
-
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
-                    {selectedImageIndex + 1} / {selectedItem.images.length}
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="overflow-y-auto p-6 border-t border-border">
-              <div className="flex items-center gap-3 flex-wrap mb-2">
-                <span className="text-accent text-sm font-medium uppercase tracking-wider">
-                  {categoryLabels[selectedItem.category]}
-                </span>
-                {selectedItem.caseStudy?.status && (
-                  <span className="px-3 py-1 rounded-full text-xs uppercase tracking-wider bg-accent/10 text-accent border border-accent/20">
-                    {statusLabels[selectedItem.caseStudy.status]}
-                  </span>
-                )}
-              </div>
-              <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                {selectedItem.title}
-              </h3>
-              <p className="text-foreground-muted mt-2">{selectedItem.description}</p>
-              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-foreground-subtle">
-                <span>Client: {selectedItem.client}</span>
-                {selectedItem.year && <span>Year: {selectedItem.year}</span>}
-              </div>
-              {selectedItem.services && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {selectedItem.services.map((service) => (
-                    <span
-                      key={service}
-                      className="px-3 py-1 text-sm rounded-full bg-glass border border-border text-foreground-muted"
-                    >
-                      {service}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {selectedItem.caseStudy && (
-                <div className="mt-8 pt-8 border-t border-border space-y-6">
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Problem
-                    </h4>
-                    <p className="text-foreground-muted leading-relaxed">
-                      {selectedItem.caseStudy.problem}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Approach
-                    </h4>
-                    <p className="text-foreground-muted leading-relaxed">
-                      {selectedItem.caseStudy.approach}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Process
-                    </h4>
-                    <ul className="space-y-2">
-                      {selectedItem.caseStudy.process.map((step, i) => (
-                        <li key={i} className="flex gap-3 text-foreground-muted leading-relaxed">
-                          <span className="text-accent flex-shrink-0 mt-1.5">●</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Outcomes
-                    </h4>
-                    <p className="text-foreground-muted leading-relaxed">
-                      {selectedItem.caseStudy.outcomes}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </AnimatedDialog>
     </section>
   )
 }
