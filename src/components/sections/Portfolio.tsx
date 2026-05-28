@@ -1,11 +1,7 @@
-import { useState, useMemo, lazy, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-// AnimatePresence is still used inside the lightbox image transition.
-// motion.div is still used inside the lightbox; the grid no longer uses
-// either, which improves scroll perf.
+import { useState, useMemo, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Container } from '../layout/Container'
 import { FadeInOnScroll } from '../shared/ScrollAnimations'
-import { AnimatedDialog } from '../ui/Dialog'
 import { portfolioItems, categories, type PortfolioItem, type Category, type ImageDisplay } from '../../data/portfolio'
 
 const Gallery3D = lazy(() => import('./Gallery3D').then(m => ({ default: m.Gallery3D })))
@@ -49,43 +45,191 @@ const statusLabels: Record<NonNullable<NonNullable<PortfolioItem['caseStudy']>['
   'shipped': 'Shipped',
 }
 
+/**
+ * Static "gallery preview" shown when the user toggles to 3D Gallery view
+ * BUT has not yet committed to activating the WebGL scene. Mounting the
+ * real Gallery3D component immediately kicks Three.js into a 60fps
+ * useFrame loop, which slows the rest of the page even before the user
+ * enters pointer-lock. This poster is pure CSS — perspective transforms
+ * over real portfolio thumbnails — so it costs nothing to render. A second
+ * explicit click on the "Enter the 3D Gallery" CTA mounts Gallery3D.
+ */
+function GalleryPoster({
+  items,
+  onActivate,
+}: {
+  items: PortfolioItem[]
+  onActivate: () => void
+}) {
+  // Six frames split across two walls. Closest-to-camera first; depth
+  // increases as the frame recedes toward the vanishing point.
+  const leftItems = items.slice(0, 3)
+  const rightItems = items.slice(3, 6)
+
+  return (
+    <div className="relative w-full h-screen overflow-hidden bg-[#0a0a15] select-none">
+      {/* Hallway floor (bottom triangle, dark purple) + ceiling (top triangle, near-black). */}
+      <div
+        className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-[#1a1a2e] via-[#252540] to-[#0a0a15]"
+        style={{ clipPath: 'polygon(0 0, 100% 0, 62% 100%, 38% 100%)' }}
+      />
+      <div
+        className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#1e1e32] via-[#252540] to-[#0a0a15]"
+        style={{ clipPath: 'polygon(38% 0, 62% 0, 100% 100%, 0 100%)' }}
+      />
+
+      {/* Vanishing-point violet glow — matches the cyberpunk Gallery3D palette. */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-violet-600/25 blur-3xl" />
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-violet-400/40 blur-2xl" />
+
+      {/* Left-wall frames in perspective. */}
+      {leftItems.map((item, i) => {
+        const size = 140 - i * 26
+        return (
+          <div
+            key={`L-${item.id}`}
+            className="absolute rounded-sm bg-cover bg-center ring-1 ring-violet-400/40 shadow-[0_0_40px_rgba(99,102,241,0.35)]"
+            style={{
+              left: `${8 + i * 8}%`,
+              top: `${42 - i * 1}%`,
+              width: `${size}px`,
+              height: `${size * 0.72}px`,
+              backgroundImage: `url(${item.images[0]})`,
+              transform: 'perspective(500px) rotateY(32deg)',
+              transformOrigin: 'right center',
+              opacity: 1 - i * 0.18,
+            }}
+            aria-hidden="true"
+          />
+        )
+      })}
+
+      {/* Right-wall frames mirrored. */}
+      {rightItems.map((item, i) => {
+        const size = 140 - i * 26
+        return (
+          <div
+            key={`R-${item.id}`}
+            className="absolute rounded-sm bg-cover bg-center ring-1 ring-violet-400/40 shadow-[0_0_40px_rgba(99,102,241,0.35)]"
+            style={{
+              right: `${8 + i * 8}%`,
+              top: `${42 - i * 1}%`,
+              width: `${size}px`,
+              height: `${size * 0.72}px`,
+              backgroundImage: `url(${item.images[0]})`,
+              transform: 'perspective(500px) rotateY(-32deg)',
+              transformOrigin: 'left center',
+              opacity: 1 - i * 0.18,
+            }}
+            aria-hidden="true"
+          />
+        )
+      })}
+
+      {/* Activation CTA. Anchored low so the section header above and the
+          hallway perspective below remain readable. */}
+      <div className="absolute inset-x-0 bottom-0 pb-20 flex flex-col items-center pointer-events-none">
+        <button
+          onClick={onActivate}
+          className="group pointer-events-auto inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-accent text-white font-medium shadow-2xl shadow-accent/40 hover:shadow-accent/60 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-accent/30"
+          aria-label="Activate interactive 3D gallery"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="group-hover:translate-x-1 transition-transform"
+          >
+            <path d="M5 12h14M13 5l7 7-7 7" />
+          </svg>
+          Enter the 3D Gallery
+        </button>
+        <p className="mt-3 text-white/60 text-sm pointer-events-none">
+          WASD to walk · Mouse to look · Click a frame for the case study
+        </p>
+        <p className="mt-1 text-white/35 text-xs pointer-events-none">
+          Preview — interactive scene loads on tap
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export function Portfolio() {
   // Default to grid view: lighter on the browser, 3D Canvas only mounts when toggled.
   const [viewMode, setViewMode] = useState<'gallery' | 'grid'>('grid')
+  // Two-stage gating: viewMode === 'gallery' shows the static poster.
+  // galleryActivated === true is the only state that mounts Three.js.
+  // Resets to false whenever we leave the gallery section (toggle to grid,
+  // Esc key, or scroll out of view via IntersectionObserver below).
+  const [galleryActivated, setGalleryActivated] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all')
-  const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null)
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const sectionRef = useRef<HTMLElement>(null)
+  const navigate = useNavigate()
+
+  // Featured items to render as "frames on the wall" in the poster. Mirrors
+  // Gallery3D's own filter (featured-only) so the preview matches what the
+  // 3D scene will actually show.
+  const posterItems = useMemo(
+    () => portfolioItems.filter((i) => i.featured).slice(0, 6),
+    [],
+  )
+
+  // Switching from gallery → grid also unmounts the active 3D scene so
+  // the GPU isn't left running in the background.
+  const switchViewMode = useCallback((mode: 'gallery' | 'grid') => {
+    if (mode === 'grid') setGalleryActivated(false)
+    setViewMode(mode)
+  }, [])
+
+  // Esc deactivates Gallery3D when the user is NOT in pointer-lock (pointer
+  // lock has its own Esc handling inside Gallery3D). The keydown handler
+  // checks for document.pointerLockElement === null before acting.
+  useEffect(() => {
+    if (!galleryActivated) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      if (typeof document !== 'undefined' && document.pointerLockElement) return
+      setGalleryActivated(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [galleryActivated])
+
+  // Auto-deactivate when the section scrolls out of view. Keeps the GPU
+  // idle when the user has moved on to the rest of the page. Re-entering
+  // the section shows the poster again, requiring a fresh activation.
+  useEffect(() => {
+    if (!galleryActivated || !sectionRef.current) return
+    const node = sectionRef.current
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (!entry.isIntersecting) setGalleryActivated(false)
+      },
+      { threshold: 0 },
+    )
+    io.observe(node)
+    return () => io.disconnect()
+  }, [galleryActivated])
 
   const filteredItems = useMemo(() => {
     if (selectedCategory === 'all') return portfolioItems
     return portfolioItems.filter((item) => item.category === selectedCategory)
   }, [selectedCategory])
 
-  const openLightbox = (item: PortfolioItem, imageIndex: number = 0) => {
-    setSelectedItem(item)
-    setSelectedImageIndex(imageIndex)
-  }
-
-  const closeLightbox = () => {
-    setSelectedItem(null)
-    setSelectedImageIndex(0)
-  }
-
-  const navigateImage = (direction: 'prev' | 'next') => {
-    if (!selectedItem) return
-    const newIndex =
-      direction === 'prev'
-        ? selectedImageIndex === 0
-          ? selectedItem.images.length - 1
-          : selectedImageIndex - 1
-        : selectedImageIndex === selectedItem.images.length - 1
-        ? 0
-        : selectedImageIndex + 1
-    setSelectedImageIndex(newIndex)
-  }
-
   return (
-    <section id="work" className={viewMode === 'gallery' ? '' : 'py-24 md:py-32 bg-background-secondary'}>
+    <section
+      ref={sectionRef}
+      id="work"
+      className={viewMode === 'gallery' ? '' : 'py-24 md:py-32 bg-background-secondary'}
+    >
       {viewMode === 'gallery' && (
         <div className="relative">
           <div className="absolute top-0 left-0 right-0 z-10 pt-6 pb-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
@@ -99,7 +243,7 @@ export function Portfolio() {
                 </p>
                 <div className="flex justify-center gap-2 mt-4">
                   <button
-                    onClick={() => setViewMode('gallery')}
+                    onClick={() => switchViewMode('gallery')}
                     className="px-4 py-2 rounded-full text-sm font-medium bg-accent text-white shadow-lg shadow-accent/25 flex items-center gap-2"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -113,7 +257,7 @@ export function Portfolio() {
                     3D Gallery
                   </button>
                   <button
-                    onClick={() => setViewMode('grid')}
+                    onClick={() => switchViewMode('grid')}
                     className="px-4 py-2 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300 flex items-center gap-2"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -129,16 +273,39 @@ export function Portfolio() {
             </Container>
           </div>
 
-          <Suspense fallback={
-            <div className="w-full h-screen bg-background-tertiary flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-12 h-12 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-foreground-muted">Loading 3D Gallery...</p>
-              </div>
-            </div>
-          }>
-            <Gallery3D onSelectItem={(item) => openLightbox(item)} />
-          </Suspense>
+          {galleryActivated ? (
+            <>
+              <Suspense fallback={
+                <div className="w-full h-screen bg-background-tertiary flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-12 h-12 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-foreground-muted">Loading 3D Gallery...</p>
+                  </div>
+                </div>
+              }>
+                {/*
+                  Clicking a frame in 3D used to open the modal. Now it
+                  navigates to the dedicated case-study page. Gallery3D
+                  already releases pointer-lock inside its onClick handler
+                  before firing onSelectItem (Gallery3D.tsx ~line 529), so
+                  the navigation happens with the cursor unlocked.
+                */}
+                <Gallery3D onSelectItem={(item) => navigate(`/work/${item.id}`)} />
+              </Suspense>
+              <button
+                onClick={() => setGalleryActivated(false)}
+                className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-sm border border-white/20 hover:bg-black/80 transition-colors"
+                aria-label="Exit 3D gallery"
+              >
+                Exit Gallery
+              </button>
+            </>
+          ) : (
+            <GalleryPoster
+              items={posterItems}
+              onActivate={() => setGalleryActivated(true)}
+            />
+          )}
         </div>
       )}
 
@@ -154,7 +321,7 @@ export function Portfolio() {
 
             <div className="flex justify-center gap-2 mt-6">
               <button
-                onClick={() => setViewMode('gallery')}
+                onClick={() => switchViewMode('gallery')}
                 className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 bg-glass border border-border text-foreground-muted hover:border-border-hover hover:text-foreground"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -168,7 +335,7 @@ export function Portfolio() {
                 3D Gallery
               </button>
               <button
-                onClick={() => setViewMode('grid')}
+                onClick={() => switchViewMode('grid')}
                 className="px-4 py-2 rounded-full text-sm font-medium bg-accent text-white shadow-lg shadow-accent/25 flex items-center gap-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -200,16 +367,17 @@ export function Portfolio() {
 
           {/*
            * Plain grid: no `layout` prop, no AnimatePresence. Filter
-           * changes mount/unmount items without FLIP animations. This
-           * removes the per-tile layout watchers that were running during
-           * scroll and contributing to the slow / jumpy feel.
+           * changes mount/unmount items without FLIP animations. Tiles
+           * are now real <Link>s — they render as <a href="/work/...">
+           * which the prerender plugin's link-discovery walks at build
+           * time to enumerate routes to snapshot.
            */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map((item) => (
                 <div key={item.id} className="animate-fade-in-up">
-                  <button
-                    onClick={() => openLightbox(item)}
-                    className="group w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
+                  <Link
+                    to={`/work/${item.id}`}
+                    className="group block w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
                   >
                     <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item)} ${item.imageMaxWidth ? 'flex items-center justify-center' : ''}`}>
                       <img
@@ -241,13 +409,11 @@ export function Portfolio() {
                         {item.title}
                       </h3>
                       <p className="text-foreground-muted text-sm mt-1">{item.client}</p>
-                      {item.caseStudy && (
-                        <p className="text-accent text-xs mt-2 font-medium">
-                          Read case study →
-                        </p>
-                      )}
+                      <p className="text-accent text-xs mt-2 font-medium">
+                        {item.caseStudy ? 'Read case study →' : 'View project →'}
+                      </p>
                     </div>
-                  </button>
+                  </Link>
                 </div>
               ))}
           </div>
@@ -259,138 +425,6 @@ export function Portfolio() {
           )}
         </Container>
       )}
-
-      {/* Lightbox / Case study modal */}
-      <AnimatedDialog open={selectedItem !== null} onOpenChange={() => closeLightbox()}>
-        {selectedItem && (
-          <div className="bg-background-secondary rounded-2xl border border-border overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="relative flex-shrink-0">
-              <div className={`relative max-h-[50vh] ${selectedItem.imageDisplay === 'cover-top' ? 'overflow-y-auto' : ''} ${selectedItem.lightCardBg ? 'bg-white' : ''} ${selectedItem.imageMaxWidth ? 'flex items-center justify-center py-8 bg-background-tertiary' : ''}`}>
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={selectedImageIndex}
-                    src={selectedItem.images[selectedImageIndex]}
-                    alt={selectedItem.title}
-                    className={
-                      selectedItem.imageMaxWidth
-                        ? 'h-auto object-contain'
-                        : `w-full ${selectedItem.imageDisplay === 'cover-top' ? 'h-auto' : 'h-full max-h-[50vh] object-contain'}`
-                    }
-                    style={selectedItem.imageMaxWidth ? { maxWidth: selectedItem.imageMaxWidth } : undefined}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  />
-                </AnimatePresence>
-              </div>
-
-              {selectedItem.images.length > 1 && (
-                <>
-                  <button
-                    onClick={() => navigateImage('prev')}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m15 18-6-6 6-6"/>
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => navigateImage('next')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </button>
-
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
-                    {selectedImageIndex + 1} / {selectedItem.images.length}
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="overflow-y-auto p-6 border-t border-border">
-              <div className="flex items-center gap-3 flex-wrap mb-2">
-                <span className="text-accent text-sm font-medium uppercase tracking-wider">
-                  {categoryLabels[selectedItem.category]}
-                </span>
-                {selectedItem.caseStudy?.status && (
-                  <span className="px-3 py-1 rounded-full text-xs uppercase tracking-wider bg-accent/10 text-accent border border-accent/20">
-                    {statusLabels[selectedItem.caseStudy.status]}
-                  </span>
-                )}
-              </div>
-              <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                {selectedItem.title}
-              </h3>
-              <p className="text-foreground-muted mt-2">{selectedItem.description}</p>
-              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-foreground-subtle">
-                <span>Client: {selectedItem.client}</span>
-                {selectedItem.year && <span>Year: {selectedItem.year}</span>}
-              </div>
-              {selectedItem.services && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {selectedItem.services.map((service) => (
-                    <span
-                      key={service}
-                      className="px-3 py-1 text-sm rounded-full bg-glass border border-border text-foreground-muted"
-                    >
-                      {service}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {selectedItem.caseStudy && (
-                <div className="mt-8 pt-8 border-t border-border space-y-6">
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Problem
-                    </h4>
-                    <p className="text-foreground-muted leading-relaxed">
-                      {selectedItem.caseStudy.problem}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Approach
-                    </h4>
-                    <p className="text-foreground-muted leading-relaxed">
-                      {selectedItem.caseStudy.approach}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Process
-                    </h4>
-                    <ul className="space-y-2">
-                      {selectedItem.caseStudy.process.map((step, i) => (
-                        <li key={i} className="flex gap-3 text-foreground-muted leading-relaxed">
-                          <span className="text-accent flex-shrink-0 mt-1.5">●</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="font-display text-xs uppercase tracking-widest text-foreground-subtle mb-3">
-                      Outcomes
-                    </h4>
-                    <p className="text-foreground-muted leading-relaxed">
-                      {selectedItem.caseStudy.outcomes}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </AnimatedDialog>
     </section>
   )
 }

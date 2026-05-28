@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Container } from './Container'
-import { Button } from '../ui/Button'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { cn } from '../../lib/utils'
 
 const navLinks = [
-  { href: '#services', label: 'Services' },
-  { href: '#work', label: 'Work' },
-  { href: '#about', label: 'About' },
-  { href: '#contact', label: 'Contact' },
+  { hash: '#services', label: 'Services' },
+  { hash: '#work', label: 'Work' },
+  { hash: '#about', label: 'About' },
+  { hash: '#contact', label: 'Contact' },
 ]
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,13 +25,17 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
+  // Close the mobile menu whenever the route changes (clicking a link
+  // navigates away — leaving the menu open is jarring).
+  useEffect(() => {
     setIsMobileMenuOpen(false)
-  }
+  }, [location.pathname, location.hash])
+
+  // From the homepage, same-page hash anchors should smooth-scroll without
+  // a route change. From a sub-page (e.g. /work/portal747), they should
+  // navigate to "/" first and then scroll — `useRouteScroll` in App.tsx
+  // handles the post-navigation scroll-to-hash.
+  const isHome = location.pathname === '/'
 
   return (
     <>
@@ -45,35 +50,22 @@ export function Header() {
         <Container>
           <nav className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <a
-              href="#"
+            <Link
+              to="/"
               className="font-display text-xl md:text-2xl font-bold text-foreground hover:text-accent transition-colors"
-              onClick={(e) => {
-                e.preventDefault()
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
             >
               Cakalic<span className="text-accent">Design</span>
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => scrollToSection(link.href)}
-                  className="text-foreground-muted hover:text-foreground transition-colors font-medium"
-                >
+                <NavLink key={link.hash} hash={link.hash} isHome={isHome}>
                   {link.label}
-                </button>
+                </NavLink>
               ))}
               <ThemeToggle />
-              <Button
-                size="sm"
-                onClick={() => scrollToSection('#contact')}
-              >
-                Get in Touch
-              </Button>
+              <ContactCTA isHome={isHome} size="sm" />
             </div>
 
             {/* Mobile theme toggle + menu button */}
@@ -127,25 +119,88 @@ export function Header() {
             <Container>
               <div className="py-4 flex flex-col gap-2">
                 {navLinks.map((link) => (
-                  <button
-                    key={link.href}
-                    onClick={() => scrollToSection(link.href)}
-                    className="py-3 text-left text-foreground-muted hover:text-foreground transition-colors font-medium"
+                  <NavLink
+                    key={link.hash}
+                    hash={link.hash}
+                    isHome={isHome}
+                    className="py-3 text-left text-foreground-muted hover:text-foreground transition-colors font-medium block"
                   >
                     {link.label}
-                  </button>
+                  </NavLink>
                 ))}
-                <Button
-                  className="mt-2 w-full"
-                  onClick={() => scrollToSection('#contact')}
-                >
-                  Get in Touch
-                </Button>
+                <ContactCTA isHome={isHome} className="mt-2 w-full" />
               </div>
             </Container>
           </motion.div>
         )}
       </AnimatePresence>
     </>
+  )
+}
+
+/**
+ * Same-page anchor when we're already on the homepage (smooth in-page scroll);
+ * router-aware `/#hash` link from a sub-page (App's useRouteScroll picks it up).
+ */
+function NavLink({
+  hash,
+  isHome,
+  children,
+  className,
+}: {
+  hash: string
+  isHome: boolean
+  children: React.ReactNode
+  className?: string
+}) {
+  const defaultCls =
+    'text-foreground-muted hover:text-foreground transition-colors font-medium'
+  if (isHome) {
+    // Same-page anchor: use native <a href="#section"> so the browser does
+    // the smooth-scroll without a routing round-trip.
+    return (
+      <a href={hash} className={className ?? defaultCls}>
+        {children}
+      </a>
+    )
+  }
+  return (
+    <Link to={`/${hash}`} className={className ?? defaultCls}>
+      {children}
+    </Link>
+  )
+}
+
+/**
+ * "Get in Touch" CTA — styled link variant of the primary Button. Renders
+ * as an in-page `<a>` on the homepage so the browser smooth-scrolls, or
+ * a router `<Link>` from sub-pages so we navigate home then scroll.
+ */
+function ContactCTA({
+  isHome,
+  size = 'md',
+  className,
+}: {
+  isHome: boolean
+  size?: 'sm' | 'md'
+  className?: string
+}) {
+  const sizeCls = size === 'sm' ? 'text-sm px-4 py-2 gap-1.5' : 'text-base px-6 py-3 gap-2'
+  const base =
+    'inline-flex items-center justify-center font-medium transition-all duration-300 rounded-xl ' +
+    'bg-accent hover:bg-accent-hover text-white shadow-lg shadow-accent/25 hover:shadow-accent/40 ' +
+    'focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background'
+  const cls = cn(base, sizeCls, className)
+  if (isHome) {
+    return (
+      <a href="#contact" className={cls}>
+        Get in Touch
+      </a>
+    )
+  }
+  return (
+    <Link to="/#contact" className={cls}>
+      Get in Touch
+    </Link>
   )
 }

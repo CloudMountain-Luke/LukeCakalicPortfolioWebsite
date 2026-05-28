@@ -1,10 +1,11 @@
+import { Link, useLocation } from 'react-router-dom'
 import { Container } from './Container'
 
 const footerLinks = [
-  { href: '#services', label: 'Services' },
-  { href: '#work', label: 'Work' },
-  { href: '#about', label: 'About' },
-  { href: '#contact', label: 'Contact' },
+  { hash: '#services', label: 'Services' },
+  { hash: '#work', label: 'Work' },
+  { hash: '#about', label: 'About' },
+  { hash: '#contact', label: 'Contact' },
 ]
 
 const socialLinks = [
@@ -39,17 +40,12 @@ const socialLinks = [
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
-  const scrollToSection = (href: string) => {
-    if (href === '#') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      const element = document.querySelector(href)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
-  }
+  // Same idiom as Header: in-page anchor on the homepage, router Link
+  // (App's useRouteScroll handles the post-nav scroll) on sub-pages.
+  const navTarget = (hash: string) => (isHome ? hash : `/${hash}`)
 
   return (
     <footer className="border-t border-border bg-background-secondary">
@@ -58,16 +54,12 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand */}
             <div className="md:col-span-2">
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="font-display text-2xl font-bold text-foreground hover:text-accent transition-colors inline-block"
-                onClick={(e) => {
-                  e.preventDefault()
-                  scrollToSection('#')
-                }}
               >
                 Cakalic<span className="text-accent">Design</span>
-              </a>
+              </Link>
               <p className="mt-4 text-foreground-muted max-w-sm">
                 Creating impactful digital experiences and visual identities that help businesses stand out and connect with their audience.
               </p>
@@ -93,13 +85,22 @@ export function Footer() {
               <h4 className="font-display font-semibold text-foreground mb-4">Quick Links</h4>
               <ul className="space-y-2">
                 {footerLinks.map((link) => (
-                  <li key={link.href}>
-                    <button
-                      onClick={() => scrollToSection(link.href)}
-                      className="text-foreground-muted hover:text-foreground transition-colors"
-                    >
-                      {link.label}
-                    </button>
+                  <li key={link.hash}>
+                    {isHome ? (
+                      <a
+                        href={link.hash}
+                        className="text-foreground-muted hover:text-foreground transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        to={navTarget(link.hash)}
+                        className="text-foreground-muted hover:text-foreground transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -129,7 +130,7 @@ export function Footer() {
             &copy; {currentYear} Cakalic Design. All rights reserved.
           </p>
           <p className="text-foreground-subtle text-sm">
-            Designed & built by Luke Cakalic
+            Designed &amp; built by Luke Cakalic
           </p>
         </div>
       </Container>

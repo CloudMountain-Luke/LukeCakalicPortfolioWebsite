@@ -1,5 +1,6 @@
 import { Container } from '../layout/Container'
 import { FadeInOnScroll } from '../shared/ScrollAnimations'
+import lukeHeadshot from '../../assets/images/luke/luke-headshot.jpg'
 
 const tools = [
   'Figma',
@@ -34,8 +35,16 @@ export function About() {
               <div className="relative aspect-square rounded-2xl border border-border bg-gradient-to-br from-background-secondary to-background-tertiary overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-8">
-                    <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-accent to-purple-500 flex items-center justify-center mb-6">
-                      <span className="font-display text-5xl font-bold text-white">LC</span>
+                    <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-6 ring-2 ring-accent/40 shadow-[0_0_30px_rgba(99,102,241,0.35)] bg-gradient-to-br from-accent to-purple-500">
+                      <img
+                        src={lukeHeadshot}
+                        alt="Luke Cakalic"
+                        width={128}
+                        height={128}
+                        className="w-full h-full object-cover object-center"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </div>
                     <h3 className="font-display text-2xl font-bold text-foreground">
                       Luke Cakalic

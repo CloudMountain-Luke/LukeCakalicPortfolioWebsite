@@ -1,0 +1,5 @@
+# Cloudflare Pages SPA fallback. All 17 prerendered routes have their own
+# static files; this rule only fires for unmatched URLs so the client-side
+# router can render NotFoundPage (with the correct theme + header + footer)
+# rather than Pages serving its generic 404.
+/*    /index.html   200
