@@ -42,3 +42,5 @@ yarn-error.log*
 # Project docs and conversation logs
 *.docx
 *.txt
+# but keep crawler / SEO files in public/
+!public/robots.txt
