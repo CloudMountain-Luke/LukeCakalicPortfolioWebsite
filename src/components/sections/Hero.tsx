@@ -21,7 +21,14 @@ export function Hero() {
        * same look at zero ongoing cost.
        */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background" />
+        {/* Atmospheric background image */}
+        <img
+          src="/images/sections/hero-atmosphere.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.15]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary/90 to-background" />
 
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent/10 blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-purple-500/10 blur-[100px]" />
@@ -35,7 +42,7 @@ export function Hero() {
         />
       </div>
 
-      <Container className="relative z-10">
+      <Container className="relative z-10 pt-24 md:pt-0">
         <div className="max-w-5xl mx-auto text-center">
           {/* Availability badge */}
           <motion.div

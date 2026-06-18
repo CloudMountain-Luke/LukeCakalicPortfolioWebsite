@@ -4,6 +4,7 @@ import { FadeInOnScroll, StaggeredReveal } from '../shared/ScrollAnimations'
 
 const services = [
   {
+    image: '/images/sections/service-ui-design.png',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect width="18" height="18" x="3" y="3" rx="2"/>
@@ -17,6 +18,7 @@ const services = [
     features: ['User Research', 'Information Architecture', 'Prototyping', 'Design Systems', 'Responsive Build'],
   },
   {
+    image: '/images/sections/service-brand-identity.jpg',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 3 2 12h3v9h14v-9h3L12 3z"/>
@@ -30,6 +32,7 @@ const services = [
     features: ['Logo Design', 'Brand Systems', 'Visual Identity', 'Brand Strategy', 'Design Tokens'],
   },
   {
+    image: '/images/sections/service-ai-engineering.jpg',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2 2 7l10 5 10-5-10-5Z"/>
@@ -66,25 +69,36 @@ export function Services() {
         >
           {services.map((service) => (
             <Card key={service.title} glow className="group">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-300">
-                  {service.icon}
+              <CardContent className="p-0">
+                {/* Service image */}
+                <div className="relative aspect-video overflow-hidden rounded-t-xl">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                 </div>
-                <h3 className="font-display text-xl font-semibold text-foreground mt-6">
-                  {service.title}
-                </h3>
-                <p className="text-foreground-muted mt-3">
-                  {service.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-6">
-                  {service.features.map((feature) => (
-                    <span
-                      key={feature}
-                      className="px-3 py-1 text-sm rounded-full bg-glass border border-border text-foreground-muted"
-                    >
-                      {feature}
-                    </span>
-                  ))}
+                <div className="p-8 pt-6">
+                  <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-300">
+                    {service.icon}
+                  </div>
+                  <h3 className="font-display text-xl font-semibold text-foreground mt-6">
+                    {service.title}
+                  </h3>
+                  <p className="text-foreground-muted mt-3">
+                    {service.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-6">
+                    {service.features.map((feature) => (
+                      <span
+                        key={feature}
+                        className="px-3 py-1 text-sm rounded-full bg-glass border border-border text-foreground-muted"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -94,3 +108,4 @@ export function Services() {
     </section>
   )
 }
+
