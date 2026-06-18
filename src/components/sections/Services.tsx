@@ -56,10 +56,10 @@ export function Services() {
             What I Do
           </span>
           <h2 className="section-heading mt-4">
-            Three things, <span className="gradient-accent">all in service of shipping</span>
+            Three disciplines, <span className="gradient-accent">one focused pipeline</span>
           </h2>
           <p className="section-subheading mt-4 mx-auto">
-            Design, brand, and engineering, run by one person, on the same process.
+            Design, brand, and engineering — run by one person, on the same process.
           </p>
         </FadeInOnScroll>
 
@@ -68,8 +68,8 @@ export function Services() {
           staggerDelay={0.1}
         >
           {services.map((service) => (
-            <Card key={service.title} glow className="group">
-              <CardContent className="p-0">
+            <Card key={service.title} glow className="group h-full">
+              <CardContent className="p-0 h-full flex flex-col">
                 {/* Service image */}
                 <div className="relative aspect-video overflow-hidden rounded-t-xl">
                   <img
@@ -79,21 +79,21 @@ export function Services() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                 </div>
-                <div className="p-8 pt-6">
+                <div className="p-5 md:p-6 pt-4 md:pt-5 flex flex-col flex-grow">
                   <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-300">
                     {service.icon}
                   </div>
                   <h3 className="font-display text-xl font-semibold text-foreground mt-6">
                     {service.title}
                   </h3>
-                  <p className="text-foreground-muted mt-3">
+                  <p className="text-foreground-muted mt-3 text-sm md:text-base flex-grow">
                     {service.description}
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-6">
+                  <div className="flex flex-wrap gap-1.5 mt-4">
                     {service.features.map((feature) => (
                       <span
                         key={feature}
-                        className="px-3 py-1 text-sm rounded-full bg-glass border border-border text-foreground-muted"
+                        className="px-2 py-0.5 text-xs rounded-full bg-glass border border-border text-foreground-muted"
                       >
                         {feature}
                       </span>

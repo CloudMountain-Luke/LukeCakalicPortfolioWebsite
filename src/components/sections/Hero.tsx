@@ -26,9 +26,14 @@ export function Hero() {
           src="/images/sections/hero-atmosphere.png"
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.15]"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.35]"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary/90 to-background" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(to bottom right, rgba(var(--bg), 0.7), rgba(var(--bg-secondary), 0.5), rgba(var(--bg), 0.7))`,
+          }}
+        />
 
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent/10 blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-purple-500/10 blur-[100px]" />

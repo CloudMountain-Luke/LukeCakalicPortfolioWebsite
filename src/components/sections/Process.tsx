@@ -49,15 +49,13 @@ export function Process() {
             How I Work
           </span>
           <h2 className="section-heading mt-4">
-            Production-grade process
-            <br />
-            <span className="gradient-accent">for digital products</span>
+            Every project, <span className="gradient-accent">six stages</span>
           </h2>
           <p className="section-subheading mt-6 mx-auto">
             Predictable outcomes, not creative gambles. Every project moves
             through the same six stages, with clear deliverables and
             acceptance criteria at each checkpoint. You know what you're
-            getting before it ships — and so do I.
+            getting before it launches — and so do I.
           </p>
         </FadeInOnScroll>
 
