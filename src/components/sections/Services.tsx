@@ -4,7 +4,7 @@ import { FadeInOnScroll, StaggeredReveal } from '../shared/ScrollAnimations'
 
 const services = [
   {
-    image: '/images/sections/service-ui-design.png',
+    image: '/images/sections/service-ui-design.jpg',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect width="18" height="18" x="3" y="3" rx="2"/>
@@ -21,9 +21,8 @@ const services = [
     image: '/images/sections/service-brand-identity.jpg',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3 2 12h3v9h14v-9h3L12 3z"/>
-        <path d="M12 3v6"/>
-        <path d="m8 7 4-4 4 4"/>
+        <path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2z"/>
+        <path d="M2 20c0-4 4-7 10-7s10 3 10 7"/>
       </svg>
     ),
     title: 'Brand Identity for Digital Products',
@@ -45,6 +44,20 @@ const services = [
       'End-to-end SaaS builds with React, TypeScript, Supabase, and AI provider routing. Stripe checkout, edge functions, agent orchestration. The pipeline that ships my own products is the same one I bring to client work.',
     features: ['React + TypeScript', 'Supabase / Edge Functions', 'Stripe Integration', 'AI Agent Systems', 'Production Deploys'],
   },
+  {
+    image: '/images/sections/service-print-collateral.jpg',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/>
+        <rect x="6" y="14" width="12" height="8" rx="1"/>
+      </svg>
+    ),
+    title: 'Print & Collateral',
+    description:
+      'Trade show booths, event signage, packaging, business cards, and large-format displays. Brand built for the physical world — consistent from screen to banner to booth.',
+    features: ['Trade Show Booths', 'Event Signage', 'Packaging', 'Business Cards', 'Large-Format Print'],
+  },
 ]
 
 export function Services() {
@@ -64,7 +77,7 @@ export function Services() {
         </FadeInOnScroll>
 
         <StaggeredReveal
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           staggerDelay={0.1}
         >
           {services.map((service) => (
