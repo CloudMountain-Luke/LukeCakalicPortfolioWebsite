@@ -31,6 +31,12 @@ export function Header() {
     setIsMobileMenuOpen(false)
   }, [location.pathname, location.hash])
 
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [isMobileMenuOpen])
+
   // From the homepage, same-page hash anchors should smooth-scroll without
   // a route change. From a sub-page (e.g. /work/portal747), they should
   // navigate to "/" first and then scroll — `useRouteScroll` in App.tsx
@@ -68,70 +74,122 @@ export function Header() {
               <ContactCTA isHome={isHome} size="sm" />
             </div>
 
-            {/* Mobile theme toggle + menu button */}
+            {/* Mobile theme toggle + hamburger */}
             <div className="md:hidden flex items-center gap-1">
               <ThemeToggle />
               <button
                 className="p-2 text-foreground"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label="Toggle menu"
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMobileMenuOpen}
               >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                {isMobileMenuOpen ? (
-                  <>
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </>
-                ) : (
-                  <>
-                    <line x1="4" x2="20" y1="12" y2="12" />
-                    <line x1="4" x2="20" y1="6" y2="6" />
-                    <line x1="4" x2="20" y1="18" y2="18" />
-                  </>
-                )}
-              </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  {isMobileMenuOpen ? (
+                    <>
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </>
+                  ) : (
+                    <>
+                      <line x1="4" x2="20" y1="12" y2="12" />
+                      <line x1="4" x2="20" y1="6" y2="6" />
+                      <line x1="4" x2="20" y1="18" y2="18" />
+                    </>
+                  )}
+                </svg>
               </button>
             </div>
           </nav>
         </Container>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Side Drawer */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 z-40 md:hidden bg-background/95 backdrop-blur-lg border-b border-border"
-          >
-            <Container>
-              <div className="py-4 flex flex-col gap-2">
-                {navLinks.map((link) => (
-                  <NavLink
-                    key={link.hash}
-                    hash={link.hash}
-                    isHome={isHome}
-                    className="py-3 text-left text-foreground-muted hover:text-foreground transition-colors font-medium block"
-                  >
-                    {link.label}
-                  </NavLink>
-                ))}
-                <ContactCTA isHome={isHome} className="mt-2 w-full" />
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-[60] md:hidden"
+              style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+
+            {/* Drawer panel — slides in from the right */}
+            <motion.aside
+              key="drawer"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 32 }}
+              className="fixed top-0 right-0 bottom-0 z-[70] flex flex-col md:hidden"
+              style={{
+                width: 'min(320px, 85vw)',
+                background: 'var(--color-background, hsl(var(--background)))',
+                borderLeft: '1px solid hsl(var(--border))',
+                boxShadow: '-8px 0 40px rgba(0,0,0,0.3)',
+              }}
+            >
+              {/* Drawer header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+                <Link
+                  to="/"
+                  className="font-display text-lg font-bold text-foreground"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Cakalic<span className="text-accent">Design</span>
+                </Link>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-1.5 text-foreground rounded-lg hover:bg-border/40 transition-colors"
+                  aria-label="Close menu"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-            </Container>
-          </motion.div>
+
+              {/* Nav links with stagger */}
+              <nav className="flex flex-col flex-1 px-4 py-6 gap-1" aria-label="Mobile navigation">
+                {navLinks.map((link, i) => (
+                  <motion.div
+                    key={link.hash}
+                    initial={{ opacity: 0, x: 24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + i * 0.06, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <NavLink
+                      hash={link.hash}
+                      isHome={isHome}
+                      className="flex items-center text-lg font-medium px-4 py-3.5 rounded-xl transition-colors text-foreground-muted hover:text-foreground hover:bg-border/30"
+                    >
+                      {link.label}
+                    </NavLink>
+                  </motion.div>
+                ))}
+              </nav>
+
+              {/* CTA at the bottom */}
+              <div className="px-6 py-6 border-t border-border">
+                <ContactCTA isHome={isHome} className="w-full justify-center" />
+              </div>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </>
