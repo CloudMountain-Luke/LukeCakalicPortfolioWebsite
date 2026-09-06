@@ -74,7 +74,7 @@ export const portfolioItems: PortfolioItem[] = [
     client: 'Cloud Mountain Graphics R&D',
     category: 'saas-products',
     description:
-      'AI Business-in-a-Box. A 23-agent build pipeline that takes a single prompt and produces a full brand and marketing site, copy, image set, video shots, and social posts. Pre-launch.',
+      'AI Business-in-a-Box. A 26-agent, 33-step build pipeline that takes a single prompt and produces a full brand and marketing site, copy, image set, video shots, and social posts. Pre-launch.',
     images: [portal747Home],
     featured: true,
     year: 2025,
@@ -87,7 +87,7 @@ export const portfolioItems: PortfolioItem[] = [
       approach:
         'An AI agent system that does what a creative agency does, in 30 minutes. Brand-mood research grounds every later step. Copy strategy, image direction, video shots, social posts, and a deployed site all flow from one prompt.',
       process: [
-        '23 specialized agents organized into six phases.',
+        '26 specialized agents and 4 human approval gates across 33 pipeline steps, in six phases.',
         'Brand-mood research locked first, before any media generation fires.',
         'Cinematographer agent owns the shot list and lens vocabulary.',
         'Prompt-engineer agent quality-checks every prompt before it spends compute.',
