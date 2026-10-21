@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Container } from '../components/layout/Container'
 import { FadeInOnScroll } from '../components/shared/ScrollAnimations'
+import { LogoModel3D } from '../components/shared/LogoModel3D'
+import { ThemedImage } from '../components/shared/ThemedImage'
 import {
   portfolioItems,
   type PortfolioItem,
@@ -297,25 +299,42 @@ function CaseStudyImages({ item }: { item: PortfolioItem }) {
         item.imageMaxWidth ? 'flex items-center justify-center py-8' : ''
       }`}
     >
-      <AnimatePresence mode="wait">
-        <motion.img
-          key={index}
-          src={item.images[index]}
-          alt={item.title}
-          className={
-            item.imageMaxWidth
-              ? 'h-auto object-contain'
-              : item.imageDisplay === 'contain'
-                ? 'w-full max-h-[70vh] object-contain p-4'
-                : 'w-full h-auto object-cover'
-          }
-          style={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        />
-      </AnimatePresence>
+      {item.model3d ? (
+        <div className="relative w-full aspect-square max-h-[70vh]">
+          <LogoModel3D
+            src={item.model3d}
+            poster={item.images[0]}
+            alt={item.title}
+            posterClassName="h-auto object-contain"
+            posterStyle={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
+          />
+        </div>
+      ) : (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            className={item.imageMaxWidth ? 'w-full flex justify-center' : undefined}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ThemedImage
+              src={item.images[index]}
+              lightSrc={item.lightImages?.[index]}
+              alt={item.title}
+              className={
+                item.imageMaxWidth
+                  ? 'h-auto object-contain'
+                  : item.imageDisplay === 'contain'
+                    ? 'w-full max-h-[70vh] object-contain p-4'
+                    : 'w-full h-auto object-cover'
+              }
+              style={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
+            />
+          </motion.div>
+        </AnimatePresence>
+      )}
 
       {multi && (
         <>

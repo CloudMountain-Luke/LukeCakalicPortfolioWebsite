@@ -12,16 +12,20 @@ import krisExplainsHome from '../assets/images/portfolio/web/kris-explains-home.
 
 // Portfolio images - Brand Identity (logos for SaaS / web / digital products)
 import avidLogo from '../assets/images/portfolio/brand/avid-logo-dark.svg'
+import avidLogoLight from '../assets/images/portfolio/brand/avid-logo.png'
 import avaLogo from '../assets/images/portfolio/brand/ava-logo.png'
+import avaLogoLight from '../assets/images/portfolio/brand/ava-logo-light.png'
 import ironbridgeLogo from '../assets/images/portfolio/brand/ironbridge-logo-dark.webp'
+import ironbridgeLogoLight from '../assets/images/portfolio/brand/ironbridge-logo-light.webp'
 import ecoh2oLogo from '../assets/images/portfolio/brand/ecoh2o-logo.png'
 import fuelmaxxLogo from '../assets/images/portfolio/brand/fuelmaxx-logo.png'
-import ecoboostLogo from '../assets/images/portfolio/brand/ecoboost-logo.png'
+import ecoboostLogo from '../assets/images/portfolio/brand/ecoboost-logo-transparent.png'
 import supermaxxLogo from '../assets/images/portfolio/brand/supermaxx-logo.png'
 import portal747Logo from '../assets/images/portfolio/brand/portal747-logo-dark.png'
+import portal747LogoLight from '../assets/images/portfolio/brand/portal747-logo-light.png'
 import upscaleforgeLogo from '../assets/images/portfolio/brand/upscaleforge-logo-transparent.png'
-import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo.png'
-import krisExplainsLogo from '../assets/images/portfolio/brand/kris-explains-logo.jpg'
+import goinspectLogo from '../assets/images/portfolio/brand/goinspect-logo-teal.png'
+import krisExplainsLogo from '../assets/images/portfolio/brand/kris-explains-neon.webp'
 
 export const categories = [
   'saas-products',
@@ -62,6 +66,13 @@ export interface PortfolioItem {
   // smaller than the default contain fit (e.g. dense PNGs without baked-in
   // transparent margin). Use a CSS length string like '150px'.
   imageMaxWidth?: string
+  // Light-theme versions of `images`, index for index. Logos with white
+  // text or strokes vanish on the light palette, so each gets a version
+  // with those parts recolored dark; dark mode keeps `images`.
+  lightImages?: string[]
+  // A GLB shown as a live, draggable 3D logo in place of images[0].
+  // images[0] stays the poster (prerender, before load, no WebGL).
+  model3d?: string
 }
 
 export const portfolioItems: PortfolioItem[] = [
@@ -279,6 +290,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'brand-identity',
     description: 'Industrial brand identity for a manufacturing and trading company.',
     images: [ironbridgeLogo],
+    lightImages: [ironbridgeLogoLight],
     featured: false,
     year: 2023,
     services: ['Logo Design', 'Brand Identity'],
@@ -292,6 +304,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'brand-identity',
     description: 'Trustworthy logo for a home inspection services company.',
     images: [avidLogo],
+    lightImages: [avidLogoLight],
     featured: false,
     year: 2023,
     services: ['Logo Design', 'Brand Identity'],
@@ -305,6 +318,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'brand-identity',
     description: 'Modern logo for an inspection services company.',
     images: [avaLogo],
+    lightImages: [avaLogoLight],
     featured: false,
     year: 2022,
     services: ['Logo Design', 'Brand Identity'],
@@ -331,6 +345,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'brand-identity',
     description: 'Logo and brand mark for an AI build pipeline platform.',
     images: [portal747Logo],
+    lightImages: [portal747LogoLight],
     featured: false,
     year: 2024,
     services: ['Logo Design', 'Brand Identity', 'SaaS Branding'],
@@ -342,8 +357,9 @@ export const portfolioItems: PortfolioItem[] = [
     client: 'Kris Geiger',
     category: 'brand-identity',
     description:
-      'Neon-sign brand mark for a science show. Cyan atom with four electrons, central nucleus, red-orange tube outline ring, and hollow neon-tube letterforms — built to read as both a logo and the actual sign behind the host.',
+      'Neon-sign brand mark for a science show. Cyan atom with four electrons, central nucleus, red-orange tube outline ring, and hollow neon-tube letterforms, built to read as both a logo and the actual sign behind the host.',
     images: [krisExplainsLogo],
+    model3d: '/models/kris-neon.glb',
     featured: false,
     year: 2025,
     services: ['Logo Design', 'Brand Identity', 'Neon Mark'],

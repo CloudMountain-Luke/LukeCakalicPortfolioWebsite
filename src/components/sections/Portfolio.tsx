@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect, useRef, useCallback, lazy, Suspense } fro
 import { Link, useNavigate } from 'react-router-dom'
 import { Container } from '../layout/Container'
 import { FadeInOnScroll } from '../shared/ScrollAnimations'
+import { LogoModel3D } from '../shared/LogoModel3D'
+import { ThemedImage } from '../shared/ThemedImage'
 import { portfolioItems, categories, type PortfolioItem, type Category, type ImageDisplay } from '../../data/portfolio'
 
 const Gallery3D = lazy(() => import('./Gallery3D').then(m => ({ default: m.Gallery3D })))
@@ -380,24 +382,35 @@ export function Portfolio() {
                     className="group block w-full text-left rounded-2xl overflow-hidden border border-border bg-glass hover:border-border-hover transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent"
                   >
                     <div className={`relative ${getTileAspect(item.imageDisplay)} overflow-hidden ${getImageBg(item)} ${item.imageMaxWidth ? 'flex items-center justify-center' : ''}`}>
-                      <img
-                        src={item.images[0]}
-                        alt={item.title}
-                        className={
-                          item.imageMaxWidth
-                            ? 'h-auto object-contain transition-transform duration-500 group-hover:scale-105'
-                            : `w-full h-full ${getImageClasses(item)} transition-transform duration-500 group-hover:scale-105`
-                        }
-                        style={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
-                        loading="lazy"
-                      />
+                      {item.model3d ? (
+                        <LogoModel3D
+                          src={item.model3d}
+                          poster={item.images[0]}
+                          alt={item.title}
+                          posterClassName="h-auto object-contain"
+                          posterStyle={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
+                        />
+                      ) : (
+                        <ThemedImage
+                          src={item.images[0]}
+                          lightSrc={item.lightImages?.[0]}
+                          alt={item.title}
+                          className={
+                            item.imageMaxWidth
+                              ? 'h-auto object-contain transition-transform duration-500 group-hover:scale-105'
+                              : `w-full h-full ${getImageClasses(item)} transition-transform duration-500 group-hover:scale-105`
+                          }
+                          style={item.imageMaxWidth ? { maxWidth: item.imageMaxWidth } : undefined}
+                          loading="lazy"
+                        />
+                      )}
                       {item.caseStudy?.status && (
                         <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-accent/90 backdrop-blur-sm text-white text-xs font-medium">
                           {statusLabels[item.caseStudy.status]}
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="pointer-events-none absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                         <span className="text-accent text-xs font-medium uppercase tracking-wider">
                           {categoryLabels[item.category]}
                         </span>

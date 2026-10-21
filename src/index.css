@@ -103,6 +103,11 @@
 html { color-scheme: dark; }
 html[data-theme="light"] { color-scheme: light; }
 
+/* ThemedImage: show the light-theme logo only in light mode. Dark is the
+   default when data-theme is absent, matching the token block above. */
+html[data-theme="light"] .theme-dark-only { display: none; }
+html:not([data-theme="light"]) .theme-light-only { display: none; }
+
 @layer base {
   * {
     box-sizing: border-box;
