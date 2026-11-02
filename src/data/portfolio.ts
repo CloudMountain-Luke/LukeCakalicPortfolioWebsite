@@ -5,6 +5,7 @@ import maxxgreenAbout from '../assets/images/portfolio/web/maxxgreen-about.jpg'
 import avidHome from '../assets/images/portfolio/web/avid-home.jpg'
 import avaHome from '../assets/images/portfolio/web/ava-home.jpg'
 import portal747Home from '../assets/images/portfolio/web/portal747-home.png'
+import bluefoldHome from '../assets/images/portfolio/web/bluefold-home.png'
 import upscaleforgeHome from '../assets/images/portfolio/web/upscaleforge-home.png'
 import goinspectHome from '../assets/images/portfolio/web/goinspect-home.png'
 import ironbridgeHome from '../assets/images/portfolio/web/ironbridge-home.webp'
@@ -76,6 +77,36 @@ export interface PortfolioItem {
 }
 
 export const portfolioItems: PortfolioItem[] = [
+  {
+    id: 'bluefold-trade-printing',
+    title: 'Bluefold Trade Printing',
+    client: 'Cloud Mountain Graphics R&D',
+    category: 'saas-products',
+    description:
+      'A trade-only wholesale print shop stood up on the store and order desk built for the first shop: 118 products at trade prices, an artwork check on every product page, AI proofing, imposition and a desk with a queue for every step. Its own name, mark, colors, address and database, stamped in a day.',
+    images: [bluefoldHome],
+    featured: true,
+    year: 2026,
+    services: ['Product Design', 'Design Engineering', 'Design Systems', 'React', 'Supabase'],
+    imageDisplay: 'cover-top',
+    link: 'https://bluefold-trade-printing.pages.dev',
+    caseStudy: {
+      status: 'live',
+      problem:
+        'The first print shop build was one shop. The question was whether it was a platform: could a second trade printer get the same store, proof room, desk and machine queues under its own brand without the first shop showing through anywhere, and without a second build.',
+      approach:
+        'One brand file holds the name, short code, estimate prefix, colors and pickup address. A check script keeps the database seed and the edge functions matched to it. The wordmark is drawn as SVG in a day ink and a night ink. A stand-up script creates the Supabase project, applies the migrations twice and deploys the functions, then records the counts in a gate file.',
+      process: [
+        'Cloned the first shop and stamped the brand file: Bluefold Trade Printing, BTP- estimates, Bluefold blue.',
+        'Drew the wordmark as SVG at three widths, with a lifted blue for the dark header.',
+        'Swapped every action color from the first shop\'s red to Bluefold blue, in all three themes and on the desk.',
+        'Stood up its own Supabase project: 64 migrations applied twice, counts equal, 51 edge functions deployed.',
+        'Captured the store, the proof room and the desk for the case study, with the first shop beside it for the stamp table.',
+      ],
+      outcomes:
+        'A working second shop on its own database and domain, with the same proof room, desk and machine queues as the first. The screens are the shop as it runs.',
+    },
+  },
   // ============================================
   // SaaS Products (Cloud Mountain Graphics R&D)
   // ============================================
